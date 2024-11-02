@@ -1,47 +1,57 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@drawable/gradient_background"
     android:gravity="center_horizontal"
-    android:orientation="vertical"
-    android:padding="16dp"> <!-- Optional background color -->
+    android:orientation="vertical"> <!-- Optional background color -->
 
     <!-- ImageView for the picture placeholder -->
     <ImageView
         android:id="@+id/nailImage"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
         android:baselineAligned="false"
-        android:contentDescription="Nail picture placeholder" />
+        android:contentDescription="Nail picture"
+        android:scaleType="fitCenter"
+        android:src="@drawable/nailment_hands" />
 
     <!-- App title -->
     <TextView
         android:id="@+id/appName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="321dp"
+        android:layout_height="104dp"
         android:layout_marginTop="24dp"
+        android:fontFamily="@font/anticdidone_regular"
+        android:gravity="center"
         android:text="Nailment"
         android:textColor="#333333"
-        android:textSize="32sp"
-        android:textStyle="bold" />
+        android:textSize="75sp"
+        android:textStyle="" />
 
     <!-- Tagline -->
     <TextView
         android:id="@+id/tagline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="332dp"
+        android:layout_height="145dp"
         android:layout_marginTop="8dp"
+        android:fontFamily="@font/anticdidone_regular"
+        android:gravity="center"
         android:text="A new step into your nail journey"
         android:textColor="#555555"
-        android:textSize="16sp" />
+        android:textSize="40sp" />
 
     <!-- Get Started Button -->
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/getStartedButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="274dp"
+        android:layout_height="79dp"
         android:layout_marginTop="48dp"
+        android:background="@drawable/button_background"
+        android:backgroundTint="@null"
         android:baselineAligned="false"
-        android:text="Get Started" />
+        android:fontFamily="@font/anticdidone_regular"
+        android:text="Get Started"
+        android:textSize="30sp"
+        android:textAllCaps="false"/>
 </LinearLayout>

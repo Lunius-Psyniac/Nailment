@@ -2,28 +2,27 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:background="@drawable/gradient_background"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
 
-    <!-- Title -->
     <TextView
         android:id="@+id/titleText"
-        android:layout_width="wrap_content"
+        android:layout_width="107dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:fontFamily="@font/anticdidone_regular"
+        android:gravity="center"
         android:text="Nailment"
         android:textSize="24sp"
-        android:layout_gravity="start"
-        android:textStyle="bold"
-        android:paddingBottom="8dp" />
+        android:textStyle="bold" />
 
-    <!-- "Nail Salons near you" Carousel -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Nail Salons near you"
         android:textSize="18sp"
-        android:paddingTop="16dp"
-        android:paddingBottom="8dp" />
+        android:fontFamily="@font/anticdidone_regular" />
 
     <HorizontalScrollView
         android:layout_width="match_parent"
@@ -123,42 +122,112 @@
     </HorizontalScrollView>
 
     <!-- "Book a Procedure" Button -->
-    <Button
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="372dp"
+        android:layout_weight="1" />
+
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/bookProcedureButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Book a procedure"
-        android:layout_marginTop="24dp" />
+        android:layout_width="274dp"
+        android:layout_height="79dp"
+        android:layout_marginTop="48dp"
+        android:background="@drawable/button_background"
+        android:backgroundTint="@null"
+        android:baselineAligned="false"
+        android:fontFamily="@font/anticdidone_regular"
+        android:text="Book Appointment"
+        android:textSize="30sp"
+        android:textAllCaps="false" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_weight="1" />
+
 
     <!-- Bottom Navigation Bar -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_gravity="bottom"
-        android:orientation="horizontal"
+        android:layout_height="111dp"
+        android:background="@drawable/border"
         android:gravity="center"
-        android:weightSum="3"
-        android:background="#F5F5F5">
+        android:orientation="horizontal"
+        android:weightSum="3">
 
-        <Button
-            android:id="@+id/homeButton"
+        <LinearLayout
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="match_parent"
-            android:text="Home" />
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
 
-        <Button
-            android:id="@+id/accountButton"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:text="Account" />
+            <ImageView
+                android:id="@+id/home_icon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:contentDescription="Home icon"
+                android:src="@drawable/nailment_home" />
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/homeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#FFFFFF"
+                android:fontFamily="@font/anticdidone_regular"
+                android:text="Home"
+                android:textAllCaps="false"
+                android:textSize="25sp" />
+        </LinearLayout>
 
-        <Button
-            android:id="@+id/settingsButton"
+        <LinearLayout
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="match_parent"
-            android:text="Settings" />
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/account_icon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:contentDescription="Account icon"
+                android:src="@drawable/nailment_user" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/accountButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#FFFFFF"
+                android:fontFamily="@font/anticdidone_regular"
+                android:text="Account"
+                android:textAllCaps="false"
+                android:textSize="25sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/settings_icon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:contentDescription="Settings icon"
+                android:src="@drawable/nailment_settings" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/settingsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#FFFFFF"
+                android:fontFamily="@font/anticdidone_regular"
+                android:text="Settings"
+                android:textAllCaps="false"
+                android:textSize="25sp" />
+        </LinearLayout>
     </LinearLayout>
+
 </LinearLayout>

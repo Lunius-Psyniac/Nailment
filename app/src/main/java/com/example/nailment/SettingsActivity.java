@@ -41,6 +41,9 @@ public class SettingsActivity extends AppCompatActivity implements SettingsAdapt
         // Adapter setup
         SettingsAdapter adapter = new SettingsAdapter(settingsList, this);
         settingsRecyclerView.setAdapter(adapter);
+
+        findViewById(R.id.homeButton).setOnClickListener(v -> startActivity(new Intent(this, MainActivity.class)));
+        findViewById(R.id.settingsButton).setOnClickListener(v -> startActivity(new Intent(this, SettingsActivity.class)));
     }
 
     private List<SettingOption> createSettingsList() {
