@@ -1,0 +1,164 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/titleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nailment"
+        android:textSize="24sp"
+        android:layout_gravity="start"
+        android:textStyle="bold"
+        android:paddingBottom="8dp" />
+
+    <!-- "Nail Salons near you" Carousel -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nail Salons near you"
+        android:textSize="18sp"
+        android:paddingTop="16dp"
+        android:paddingBottom="8dp" />
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <!-- Placeholder for clickable images -->
+            <ImageView
+                android:id="@+id/logo1"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginEnd="8dp"
+                android:background="#E0E0E0"
+                android:contentDescription="Nail Salon Logo 1" />
+
+            <ImageView
+                android:id="@+id/logo2"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginEnd="8dp"
+                android:background="#E0E0E0"
+                android:contentDescription="Nail Salon Logo 2" />
+
+            <ImageView
+                android:id="@+id/logo3"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginEnd="8dp"
+                android:background="#E0E0E0"
+                android:contentDescription="Nail Salon Logo 3" />
+
+            <ImageView
+                android:id="@+id/logo4"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="#E0E0E0"
+                android:contentDescription="Nail Salon Logo 4" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <!-- "Best designs of the week" Carousel -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Best designs of the week"
+        android:textSize="18sp"
+        android:paddingTop="16dp"
+        android:paddingBottom="8dp" />
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <!-- Placeholder for best designs images -->
+            <ImageView
+                android:id="@+id/design1"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginEnd="8dp"
+                android:background="#E0E0E0"
+                android:contentDescription="Best Design 1" />
+
+            <ImageView
+                android:id="@+id/design2"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginEnd="8dp"
+                android:background="#E0E0E0"
+                android:contentDescription="Best Design 2" />
+
+            <ImageView
+                android:id="@+id/design3"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginEnd="8dp"
+                android:background="#E0E0E0"
+                android:contentDescription="Best Design 3" />
+
+            <ImageView
+                android:id="@+id/design4"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="#E0E0E0"
+                android:contentDescription="Best Design 4" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <!-- "Book a Procedure" Button -->
+    <Button
+        android:id="@+id/bookProcedureButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Book a procedure"
+        android:layout_marginTop="24dp" />
+
+    <!-- Bottom Navigation Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:weightSum="3"
+        android:background="#F5F5F5">
+
+        <Button
+            android:id="@+id/homeButton"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="Home" />
+
+        <Button
+            android:id="@+id/accountButton"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="Account" />
+
+        <Button
+            android:id="@+id/settingsButton"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="Settings" />
+    </LinearLayout>
+</LinearLayout>

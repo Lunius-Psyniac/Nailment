@@ -1,0 +1,67 @@
+<!-- res/layout/activity_list.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Back Button -->
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:src="@drawable/placeholder_image"
+        android:contentDescription="Back"
+        android:background="?attr/selectableItemBackgroundBorderless" />
+
+    <!-- Title for the List -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center_horizontal"
+        android:text="Manicurists"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <!-- RecyclerView for Manicurist List -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/manicuristRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="8dp" />
+
+    <!-- Bottom Navigation Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:weightSum="3"
+        android:background="#F5F5F5">
+
+        <Button
+            android:id="@+id/homeButton"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="Home" />
+
+        <Button
+            android:id="@+id/accountButton"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="Account" />
+
+        <Button
+            android:id="@+id/settingsButton"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="Settings" />
+    </LinearLayout>
+
+</LinearLayout>

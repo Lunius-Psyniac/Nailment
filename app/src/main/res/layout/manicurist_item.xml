@@ -1,0 +1,48 @@
+<!-- res/layout/manicurist_item.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp">
+
+    <!-- Manicurist Image -->
+    <ImageView
+        android:id="@+id/manicuristImage"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/placeholder_image"
+        android:contentDescription="Manicurist Image" />
+
+    <!-- Manicurist Details -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <!-- Manicurist Name -->
+        <TextView
+            android:id="@+id/manicuristName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
+        <!-- Manicurist Services -->
+        <TextView
+            android:id="@+id/manicuristServices"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Services" />
+
+        <!-- Manicurist Work Location -->
+        <TextView
+            android:id="@+id/manicuristLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Location" />
+    </LinearLayout>
+
+</LinearLayout>

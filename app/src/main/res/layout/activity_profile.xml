@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Profile Container -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/placeholder_image"
+        android:padding="16dp"
+        android:layout_margin="16dp">
+
+        <!-- Profile Info -->
+        <TextView
+            android:id="@+id/profile_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/profile_services"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginTop="8dp"/>
+
+        <TextView
+            android:id="@+id/profile_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginTop="8dp"/>
+
+        <ImageView
+            android:id="@+id/profile_image"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="end"
+            android:src="@drawable/placeholder_image"/>
+
+        <!-- Reviews Section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reviews"
+            android:textSize="20sp"
+            android:layout_marginTop="16dp"
+            android:textStyle="bold"/>
+
+        <!-- Bar chart and star ratings placeholder -->
+        <TextView
+            android:id="@+id/star_rating_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="4.5 stars (based on 50 reviews)"
+            android:layout_marginTop="8dp"/>
+
+        <!-- Review Text -->
+        <TextView
+            android:id="@+id/review_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Great experience! - User123"
+            android:layout_marginTop="8dp"/>
+
+        <!-- Book Button -->
+        <Button
+            android:id="@+id/book_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"/>
+    </LinearLayout>
+
+    <!-- Bottom Navigation Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:weightSum="3"
+        android:background="#F5F5F5">
+
+        <Button
+            android:id="@+id/homeButton"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="Home" />
+
+        <Button
+            android:id="@+id/accountButton"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="Account" />
+
+        <Button
+            android:id="@+id/settingsButton"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="Settings" />
+    </LinearLayout>
+</LinearLayout>

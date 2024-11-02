@@ -1,0 +1,47 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="16dp"> <!-- Optional background color -->
+
+    <!-- ImageView for the picture placeholder -->
+    <ImageView
+        android:id="@+id/nailImage"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center_horizontal"
+        android:baselineAligned="false"
+        android:contentDescription="Nail picture placeholder" />
+
+    <!-- App title -->
+    <TextView
+        android:id="@+id/appName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Nailment"
+        android:textColor="#333333"
+        android:textSize="32sp"
+        android:textStyle="bold" />
+
+    <!-- Tagline -->
+    <TextView
+        android:id="@+id/tagline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="A new step into your nail journey"
+        android:textColor="#555555"
+        android:textSize="16sp" />
+
+    <!-- Get Started Button -->
+    <Button
+        android:id="@+id/getStartedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:baselineAligned="false"
+        android:text="Get Started" />
+</LinearLayout>
