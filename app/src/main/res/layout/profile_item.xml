@@ -1,13 +1,11 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="16dp"
-    android:background="#FFFFFF"
-    android:layout_marginBottom="8dp"
-    android:gravity="center_vertical"
-    android:elevation="4dp">
+    android:padding="8dp"
+    android:background="@drawable/button_background"
+    android:layout_marginBottom="10dp">
 
     <ImageView
         android:id="@+id/profileImage"
@@ -28,23 +26,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Name"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textSize="25dp"
+            android:fontFamily="@font/anticdidone_regular" />
 
         <TextView
             android:id="@+id/servicesText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Services"
-            android:textSize="14sp"
-            android:textColor="#757575" />
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:fontFamily="@font/anticdidone_regular" />
 
         <TextView
             android:id="@+id/locationText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Location"
-            android:textSize="14sp"
-            android:textColor="#757575" />
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:fontFamily="@font/anticdidone_regular" />
     </LinearLayout>
 </LinearLayout>

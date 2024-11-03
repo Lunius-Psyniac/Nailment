@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
@@ -19,6 +20,9 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+        ImageButton backButton = findViewById(R.id.backButton);
+        backButton.setOnClickListener(view -> finish());
 
         // Retrieve the manicurist data from the Intent
         Manicurist manicurist = (Manicurist) getIntent().getSerializableExtra("manicurist");

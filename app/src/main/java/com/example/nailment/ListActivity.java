@@ -41,11 +41,11 @@ public class ListActivity extends AppCompatActivity {
 
     private List<Manicurist> createManicuristList() {
         List<Manicurist> list = new ArrayList<>();
-        list.add(new Manicurist("Jane Doe", "Manicures, Pedicures", "Downtown Nail Spa", R.drawable.placeholder_image));
-        list.add(new Manicurist("Emily Smith", "Manicures", "Uptown Nails", R.drawable.placeholder_image));
-        list.add(new Manicurist("Sarah Johnson", "Pedicures", "East Side Nails", R.drawable.placeholder_image));
-        list.add(new Manicurist("Jessica Brown", "Manicures, Pedicures", "West End Nail Studio", R.drawable.placeholder_image));
-        list.add(new Manicurist("Samantha Lee", "Manicures", "North Point Nail Salon", R.drawable.placeholder_image));
+        list.add(new Manicurist("Jane Doe", "Manicures, Pedicures", "Downtown Nail Spa", R.drawable.nailment_pro1));
+        list.add(new Manicurist("Emily Smith", "Manicures", "Uptown Nails", R.drawable.nailment_pro2));
+        list.add(new Manicurist("Sarah Johnson", "Pedicures", "East Side Nails", R.drawable.nailment_pro3));
+        list.add(new Manicurist("Thomas Brown", "Manicures, Pedicures", "West End Nail Studio", R.drawable.nailment_pro4));
+        list.add(new Manicurist("Samantha Lee", "Manicures", "North Point Nail Salon", R.drawable.nailment_pro5));
         return list;
     }
 

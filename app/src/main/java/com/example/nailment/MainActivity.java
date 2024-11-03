@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -17,17 +19,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Open hyperlink on logo click
-        findViewById(R.id.logo1).setOnClickListener(v -> openLink("https://example.com/nailsalon1"));
-        findViewById(R.id.logo2).setOnClickListener(v -> openLink("https://example.com/nailsalon2"));
-        findViewById(R.id.logo3).setOnClickListener(v -> openLink("https://example.com/nailsalon3"));
-        findViewById(R.id.logo4).setOnClickListener(v -> openLink("https://example.com/nailsalon4"));
+        ImageView logo1 = findViewById(R.id.logo1);
+        logo1.setOnClickListener(v -> openWebPage("http://salon1.com"));
 
-        // Book procedure button to navigate to ListActivity
-        findViewById(R.id.bookProcedureButton).setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, ListActivity.class);
-            startActivity(intent);
-        });
+        ImageView logo2 = findViewById(R.id.logo2);
+        logo2.setOnClickListener(v -> openWebPage("http://salon2.com"));
+
+        ImageView logo3 = findViewById(R.id.logo3);
+        logo3.setOnClickListener(v -> openWebPage("http://salon3.com"));
+
+        ImageView logo4 = findViewById(R.id.logo4);
+        logo4.setOnClickListener(v -> openWebPage("http://salon4.com"));
 
         // Bottom Navigation Bar
         findViewById(R.id.homeButton).setOnClickListener(v -> startActivity(new Intent(this, MainActivity.class)));
@@ -40,9 +42,14 @@ public class MainActivity extends AppCompatActivity {
                 openCamera();
             }
         });
+        // Book procedure button to navigate to ListActivity
+        findViewById(R.id.bookProcedureButton).setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ListActivity.class);
+            startActivity(intent);
+        });
     }
 
-    private void openLink(String url) {
+    private void openWebPage(String url) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         startActivity(intent);
     }

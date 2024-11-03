@@ -93,7 +93,20 @@ public class SettingsActivity extends AppCompatActivity implements SettingsAdapt
     }
 
     private void showPrivacyPolicy() {
-        // Logic to show a popup with privacy policy
+        // Privacy policy content
+        String privacyPolicyText = "Privacy Policy\n\n" +
+                "This is a sample privacy policy. It explains how we collect, use, and protect your data. " +
+                "Your privacy is important to us, and we are committed to safeguarding your information.";
+
+        // Create an AlertDialog for privacy policy
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Privacy Policy");
+        builder.setMessage(privacyPolicyText);
+        builder.setPositiveButton("Close", (dialog, which) -> dialog.dismiss());
+
+        // Show the dialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     private void openHelpWebsite() {

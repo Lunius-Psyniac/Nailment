@@ -8,21 +8,27 @@
 
     <TextView
         android:id="@+id/titleText"
-        android:layout_width="107dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:fontFamily="@font/anticdidone_regular"
         android:gravity="center"
         android:text="Nailment"
-        android:textSize="24sp"
+        android:textSize="30sp"
         android:textStyle="bold" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/anticdidone_regular"
         android:text="Nail Salons near you"
-        android:textSize="18sp"
-        android:fontFamily="@font/anticdidone_regular" />
+        android:layout_gravity="left"
+        android:textStyle="bold"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:textSize="25dp" />
 
     <HorizontalScrollView
         android:layout_width="match_parent"
@@ -37,32 +43,45 @@
             <!-- Placeholder for clickable images -->
             <ImageView
                 android:id="@+id/logo1"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_marginEnd="8dp"
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="15dp"
+                android:padding="2dp"
+                android:src="@drawable/nailment_salon1"
                 android:background="@drawable/button_background"
                 android:contentDescription="Nail Salon Logo 1" />
 
             <ImageView
                 android:id="@+id/logo2"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_marginEnd="8dp"
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:padding="2dp"
+                android:src="@drawable/nailment_salon2"
                 android:background="@drawable/button_background"
                 android:contentDescription="Nail Salon Logo 2" />
 
             <ImageView
                 android:id="@+id/logo3"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_marginEnd="8dp"
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:padding="2dp"
+                android:src="@drawable/nailment_salon3"
                 android:background="@drawable/button_background"
                 android:contentDescription="Nail Salon Logo 3" />
 
             <ImageView
                 android:id="@+id/logo4"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginStart="10dp"
+                android:padding="2dp"
+                android:src="@drawable/nailment_salon4"
                 android:background="@drawable/button_background"
                 android:contentDescription="Nail Salon Logo 4" />
         </LinearLayout>
@@ -72,11 +91,13 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="16dp"
-        android:paddingBottom="8dp"
         android:fontFamily="@font/anticdidone_regular"
-        android:text="Best designs of the week"
-        android:textSize="18sp" />
+        android:layout_gravity="left"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:textStyle="bold"
+        android:textSize="25dp"
+        android:text="Best designs of the week" />
 
     <HorizontalScrollView
         android:layout_width="match_parent"
@@ -91,47 +112,61 @@
             <!-- Placeholder for best designs images -->
             <ImageView
                 android:id="@+id/design1"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_marginEnd="8dp"
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="15dp"
+                android:padding="2dp"
+                android:src="@drawable/nailment_nails1"
                 android:background="@drawable/button_background"
                 android:contentDescription="Best Design 1" />
 
             <ImageView
                 android:id="@+id/design2"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_marginEnd="8dp"
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:padding="2dp"
+                android:src="@drawable/nailment_nails2"
                 android:background="@drawable/button_background"
                 android:contentDescription="Best Design 2" />
 
             <ImageView
                 android:id="@+id/design3"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_marginEnd="8dp"
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:padding="2dp"
+                android:src="@drawable/nailment_nails3"
                 android:background="@drawable/button_background"
                 android:contentDescription="Best Design 3" />
 
             <ImageView
                 android:id="@+id/design4"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginStart="10dp"
+                android:padding="2dp"
+                android:src="@drawable/nailment_nails4"
                 android:background="@drawable/button_background"
                 android:contentDescription="Best Design 4" />
         </LinearLayout>
     </HorizontalScrollView>
 
-    <!-- "Book a Procedure" Button -->
+    <!-- "Book Appointment" Button -->
     <View
         android:layout_width="match_parent"
-        android:layout_height="372dp"
+        android:layout_height="193dp"
         android:layout_weight="1" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/bookProcedureButton"
         android:layout_width="274dp"
         android:layout_height="79dp"
+        android:textStyle="bold"
         android:layout_marginTop="48dp"
         android:background="@drawable/button_background"
         android:backgroundTint="@null"
@@ -143,7 +178,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="130dp"
         android:layout_weight="1" />
 
 
@@ -176,6 +211,7 @@
                 android:backgroundTint="#FFFFFF"
                 android:fontFamily="@font/anticdidone_regular"
                 android:text="Home"
+                android:textStyle="bold"
                 android:textAllCaps="false"
                 android:textSize="25sp" />
         </LinearLayout>
@@ -201,6 +237,7 @@
                 android:backgroundTint="#FFFFFF"
                 android:fontFamily="@font/anticdidone_regular"
                 android:text="AR Nails"
+                android:textStyle="bold"
                 android:textAllCaps="false"
                 android:textSize="25sp" />
         </LinearLayout>
@@ -226,6 +263,7 @@
                 android:backgroundTint="#FFFFFF"
                 android:fontFamily="@font/anticdidone_regular"
                 android:text="Settings"
+                android:textStyle="bold"
                 android:textAllCaps="false"
                 android:textSize="25sp" />
         </LinearLayout>
