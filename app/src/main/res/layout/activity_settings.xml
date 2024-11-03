@@ -60,8 +60,8 @@
                 android:id="@+id/account_icon"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:contentDescription="Account icon"
-                android:src="@drawable/nailment_user" />
+                android:contentDescription="Camera icon"
+                android:src="@drawable/nailment_camera" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/accountButton"
@@ -69,7 +69,7 @@
                 android:layout_height="wrap_content"
                 android:backgroundTint="#FFFFFF"
                 android:fontFamily="@font/anticdidone_regular"
-                android:text="Account"
+                android:text="AR Nails"
                 android:textAllCaps="false"
                 android:textSize="25sp" />
         </LinearLayout>
