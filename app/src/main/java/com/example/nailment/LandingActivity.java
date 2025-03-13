@@ -11,32 +11,16 @@ public class LandingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Check if the user has seen the landing page
-        SharedPreferences preferences = getSharedPreferences("appPreferences", MODE_PRIVATE);
-        boolean isFirstLaunch = preferences.getBoolean("isFirstLaunch", true);
-
-        if (!isFirstLaunch) {
-            navigateToMainPage();
-            return;
-        }
-
         setContentView(R.layout.activity_landing);
 
-        Button getStartedButton = findViewById(R.id.getStartedButton);
-        getStartedButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Mark as not first launch and go to the main page
-                preferences.edit().putBoolean("isFirstLaunch", false).apply();
-                navigateToMainPage();
-            }
-        });
+        // Always navigate to the Login screen when the app is first opened.
+        navigateToLoginPage();
     }
 
-    private void navigateToMainPage() {
-        Intent intent = new Intent(LandingActivity.this, MainActivity.class);
+    private void navigateToLoginPage() {
+        // Navigate directly to LoginActivity
+        Intent intent = new Intent(LandingActivity.this, LoginActivity.class);
         startActivity(intent);
-        finish();
+        finish(); // Finish the current activity so the user cannot return to it.
     }
 }

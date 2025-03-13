@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "921603207554",
+    "project_id": "nailment",
+    "storage_bucket": "nailment.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:921603207554:android:948d9d4408d2b11bdc9f9b",
+        "android_client_info": {
+          "package_name": "com.example.nailment"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCAGgOBcZq2QVDKRLg-0SwuYzwJsI1fySQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
