@@ -17,7 +17,7 @@ public class LandingActivity extends AppCompatActivity {
         boolean isFirstLaunch = preferences.getBoolean("isFirstLaunch", true);
 
         if (!isFirstLaunch) {
-            navigateToMainPage();
+            navigateToAuth();
             return;
         }
 
@@ -27,15 +27,15 @@ public class LandingActivity extends AppCompatActivity {
         getStartedButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Mark as not first launch and go to the main page
+                // Mark as not first launch and go to the auth page
                 preferences.edit().putBoolean("isFirstLaunch", false).apply();
-                navigateToMainPage();
+                navigateToAuth();
             }
         });
     }
 
-    private void navigateToMainPage() {
-        Intent intent = new Intent(LandingActivity.this, MainActivity.class);
+    private void navigateToAuth() {
+        Intent intent = new Intent(LandingActivity.this, AuthActivity.class);
         startActivity(intent);
         finish();
     }
