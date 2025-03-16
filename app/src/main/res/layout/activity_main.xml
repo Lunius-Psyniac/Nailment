@@ -212,7 +212,12 @@
                 android:text="Home"
                 android:textStyle="bold"
                 android:textAllCaps="false"
-                android:textSize="25sp" />
+                android:textSize="20sp"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -238,7 +243,12 @@
                 android:text="AR Nails"
                 android:textStyle="bold"
                 android:textAllCaps="false"
-                android:textSize="25sp" />
+                android:textSize="20sp"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -264,7 +274,12 @@
                 android:text="Chat"
                 android:textStyle="bold"
                 android:textAllCaps="false"
-                android:textSize="25sp" />
+                android:textSize="20sp"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -290,7 +305,12 @@
                 android:text="Settings"
                 android:textStyle="bold"
                 android:textAllCaps="false"
-                android:textSize="25sp" />
+                android:textSize="20sp"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"/>
         </LinearLayout>
     </LinearLayout>
 
