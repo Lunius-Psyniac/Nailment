@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "752533829850",
+    "firebase_url": "https://nailmentc-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "nailmentc",
+    "storage_bucket": "nailmentc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:752533829850:android:eca96ae4e759e6dba1cde3",
+        "android_client_info": {
+          "package_name": "com.example.nailment"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCH4mEv2Jjg-taD81f8PybuyMqkq1z4Q3M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

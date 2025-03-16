@@ -3,10 +3,10 @@ package com.example.nailment;
 import java.io.Serializable;
 
 public class Manicurist implements Serializable {
-    private String name;
-    private String services;
-    private String location;
-    private int imageResource;
+    private final String name;
+    private final String services;
+    private final String location;
+    private final int imageResource;
 
     public Manicurist(String name, String services, String location, int imageResource) {
         this.name = name;

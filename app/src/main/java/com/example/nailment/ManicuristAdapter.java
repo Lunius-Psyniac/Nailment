@@ -13,8 +13,8 @@ import java.util.List;
 
 public class ManicuristAdapter extends RecyclerView.Adapter<ManicuristAdapter.ManicuristViewHolder> {
 
-    private List<Manicurist> manicurists;
-    private OnManicuristClickListener clickListener;
+    private final List<Manicurist> manicurists;
+    private final OnManicuristClickListener clickListener;
 
     // Interface to handle clicks on each manicurist item
     public interface OnManicuristClickListener {
