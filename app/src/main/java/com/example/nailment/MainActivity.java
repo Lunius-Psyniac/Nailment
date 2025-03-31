@@ -5,6 +5,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.provider.Settings;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -40,6 +44,13 @@ public class MainActivity extends AppCompatActivity {
         // Book procedure button to navigate to ListActivity
         findViewById(R.id.bookProcedureButton).setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, ListActivity.class);
+            startActivity(intent);
+        });
+
+        // Chat button to navigate to ChatActivity
+        Button chatButton = findViewById(R.id.chatButton);
+        chatButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ChatActivity.class);
             startActivity(intent);
         });
     }

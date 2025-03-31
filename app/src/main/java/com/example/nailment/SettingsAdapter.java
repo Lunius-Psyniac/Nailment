@@ -13,8 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.ViewHolder> {
-    private List<SettingOption> settings;
-    private OnSettingChangeListener settingChangeListener;
+    private final List<SettingOption> settings;
+    private final OnSettingChangeListener settingChangeListener;
 
     public interface OnSettingChangeListener {
         boolean isNotificationsEnabled();

@@ -181,7 +181,6 @@
         android:layout_height="130dp"
         android:layout_weight="1" />
 
-
     <!-- Bottom Navigation Bar -->
     <LinearLayout
         android:layout_width="match_parent"
@@ -189,7 +188,7 @@
         android:background="@drawable/border"
         android:gravity="center"
         android:orientation="horizontal"
-        android:weightSum="3">
+        android:weightSum="4">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -213,7 +212,12 @@
                 android:text="Home"
                 android:textStyle="bold"
                 android:textAllCaps="false"
-                android:textSize="25sp" />
+                android:textSize="20sp"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -239,7 +243,43 @@
                 android:text="AR Nails"
                 android:textStyle="bold"
                 android:textAllCaps="false"
-                android:textSize="25sp" />
+                android:textSize="20sp"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/chat_icon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:contentDescription="Chat icon"
+                android:src="@drawable/nailment_chat" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/chatButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#FFFFFF"
+                android:fontFamily="@font/anticdidone_regular"
+                android:text="Chat"
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                android:textSize="20sp"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -265,7 +305,12 @@
                 android:text="Settings"
                 android:textStyle="bold"
                 android:textAllCaps="false"
-                android:textSize="25sp" />
+                android:textSize="20sp"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"/>
         </LinearLayout>
     </LinearLayout>
 

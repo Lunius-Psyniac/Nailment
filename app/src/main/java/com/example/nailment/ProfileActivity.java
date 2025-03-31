@@ -2,24 +2,26 @@ package com.example.nailment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class ProfileActivity extends AppCompatActivity {
 
     private TextView nameTextView, servicesTextView, locationTextView;
     private ImageView profileImageView;
     private Button bookButton;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+        mAuth = FirebaseAuth.getInstance();
 
         ImageButton backButton = findViewById(R.id.backButton);
         backButton.setOnClickListener(view -> finish());
@@ -41,30 +43,18 @@ public class ProfileActivity extends AppCompatActivity {
             locationTextView.setText(manicurist.getLocation());
             profileImageView.setImageResource(manicurist.getImageResource());
 
-            // Set up dynamic booking button text
-            int bookingPrice = 5 * (1 + (int) (Math.random() * 7));  // Generates a random multiple of 5 under 35
-            bookButton.setText("Book " + manicurist.getName() + " for " + bookingPrice + "$");
+            // Set up chat button text
+            bookButton.setText("Chat with " + manicurist.getName());
         }
 
-        // Handle book button click to show payment popup
-        bookButton.setOnClickListener(v -> showPaymentDialog());
+        // Handle book button click to open chat
+        bookButton.setOnClickListener(v -> {
+            Intent intent = new Intent(ProfileActivity.this, ChatActivity.class);
+            startActivity(intent);
+        });
 
         // Bottom Navigation Bar
         findViewById(R.id.homeButton).setOnClickListener(v -> startActivity(new Intent(this, MainActivity.class)));
         findViewById(R.id.settingsButton).setOnClickListener(v -> startActivity(new Intent(this, SettingsActivity.class)));
-    }
-
-    private void showPaymentDialog() {
-        // Create a simple dialog for payment input
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_payment, null);
-
-        new AlertDialog.Builder(this)
-                .setTitle("Enter Payment Details")
-                .setView(dialogView)
-                .setPositiveButton("Confirm", (dialog, which) -> {
-                    // Handle payment confirmation
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
     }
 }
