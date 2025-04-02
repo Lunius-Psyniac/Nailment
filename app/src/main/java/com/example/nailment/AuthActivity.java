@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
@@ -14,7 +16,11 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class AuthActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
-    private EditText emailInput, passwordInput;
+    private EditText emailInput, passwordInput, nameInput;
+    private EditText locationInput, profilePictureLinkInput;
+    private EditText selfDescriptionInput;
+    private LinearLayout manicuristFields;
+    private RadioGroup userTypeGroup;
     private Button loginButton, registerButton;
     private boolean isLoginMode = true;
 
@@ -28,6 +34,12 @@ public class AuthActivity extends AppCompatActivity {
         // Initialize views
         emailInput = findViewById(R.id.emailInput);
         passwordInput = findViewById(R.id.passwordInput);
+        nameInput = findViewById(R.id.nameInput);
+        locationInput = findViewById(R.id.locationInput);
+        profilePictureLinkInput = findViewById(R.id.profilePictureLinkInput);
+        selfDescriptionInput = findViewById(R.id.selfDescriptionInput);
+        manicuristFields = findViewById(R.id.manicuristFields);
+        userTypeGroup = findViewById(R.id.userTypeGroup);
         loginButton = findViewById(R.id.loginButton);
         registerButton = findViewById(R.id.registerButton);
 
@@ -37,6 +49,15 @@ public class AuthActivity extends AppCompatActivity {
             navigateToMain();
             return;
         }
+
+        // Set up user type selection listener
+        userTypeGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId == R.id.manicuristTypeRadio) {
+                manicuristFields.setVisibility(View.VISIBLE);
+            } else if (checkedId == R.id.userTypeRadio) {
+                manicuristFields.setVisibility(View.GONE);
+            }
+        });
 
         loginButton.setOnClickListener(v -> {
             String email = emailInput.getText().toString();
@@ -50,7 +71,7 @@ public class AuthActivity extends AppCompatActivity {
             if (isLoginMode) {
                 loginUser(email, password);
             } else {
-                registerUser(email, password);
+                registerUser();
             }
         });
 
@@ -58,6 +79,11 @@ public class AuthActivity extends AppCompatActivity {
             isLoginMode = !isLoginMode;
             loginButton.setText(isLoginMode ? "Login" : "Register");
             registerButton.setText(isLoginMode ? "Need an account? Register" : "Already have an account? Login");
+            
+            // Show/hide registration fields
+            nameInput.setVisibility(isLoginMode ? View.GONE : View.VISIBLE);
+            userTypeGroup.setVisibility(isLoginMode ? View.GONE : View.VISIBLE);
+            manicuristFields.setVisibility(View.GONE);
         });
     }
 
@@ -76,10 +102,39 @@ public class AuthActivity extends AppCompatActivity {
                 });
     }
 
-    private void registerUser(String email, String password) {
+    private void registerUser() {
+        String email = emailInput.getText().toString();
+        String password = passwordInput.getText().toString();
+        String name = nameInput.getText().toString();
+        String profilePictureLink = profilePictureLinkInput.getText().toString();
+        String selfDescription = selfDescriptionInput.getText().toString();
+
+        // Validate common fields
+        if (email.isEmpty() || password.isEmpty() || name.isEmpty() || 
+            profilePictureLink.isEmpty() || selfDescription.isEmpty()) {
+            Toast.makeText(AuthActivity.this, "Please fill in all required fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Check user type selection
+        int selectedType = userTypeGroup.getCheckedRadioButtonId();
+        if (selectedType == -1) {
+            Toast.makeText(AuthActivity.this, "Please select a user type", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Validate type-specific fields
+        if (selectedType == R.id.manicuristTypeRadio) {
+            String location = locationInput.getText().toString();
+            if (location.isEmpty()) {
+                Toast.makeText(AuthActivity.this, "Please fill in your location", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
         Log.d("AuthActivity", "Starting registration process for email: " + email);
         
-        // First, create the authentication user
+        // Create the authentication user
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
@@ -87,9 +142,18 @@ public class AuthActivity extends AppCompatActivity {
                         FirebaseUser firebaseUser = mAuth.getCurrentUser();
                         if (firebaseUser != null) {
                             String uid = firebaseUser.getUid();
+                            String userType = selectedType == R.id.manicuristTypeRadio ? "MANICURIST" : "USER";
                             
-                            // Create user object
-                            User user = new User(uid, email);
+                            // Create user object with common fields
+                            User user = new User(uid, email, name, userType);
+                            user.setProfilePictureLink(profilePictureLink);
+                            user.setSelfDescription(selfDescription);
+                            
+                            // Add type-specific fields
+                            if (userType.equals("MANICURIST")) {
+                                user.setLocation(locationInput.getText().toString());
+                                user.setAvgRating(0.0);
+                            }
                             
                             // Get database reference
                             FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -106,7 +170,6 @@ public class AuthActivity extends AppCompatActivity {
                                 })
                                 .addOnFailureListener(e -> {
                                     Log.e("AuthActivity", "Database Error: " + e.getMessage());
-                                    // If database creation fails, still allow login but notify user
                                     Toast.makeText(AuthActivity.this,
                                         "Account created but profile setup incomplete. Please try again later.",
                                         Toast.LENGTH_LONG).show();

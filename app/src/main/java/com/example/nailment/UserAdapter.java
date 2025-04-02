@@ -3,9 +3,11 @@ package com.example.nailment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,14 +37,25 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     @Override
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
         User user = users.get(position);
-        holder.userNameText.setText(user.getDisplayName());
-        holder.userEmailText.setText(user.getEmail());
+        holder.userNameText.setText(user.getName());
         
-        // Don't show current user in the list
-        if (user.getUid().equals(currentUserId)) {
-            holder.itemView.setVisibility(View.GONE);
+        // Display different information based on user type
+        if (user.getUserType().equals("MANICURIST")) {
+            holder.userEmailText.setText(String.format("%s • Rating: %.1f", 
+                user.getLocation(), user.getAvgRating()));
         } else {
-            holder.itemView.setVisibility(View.VISIBLE);
+            holder.userEmailText.setText(user.getSelfDescription());
+        }
+
+        // Load profile picture
+        String profilePictureUrl = user.getProfilePictureLink();
+        if (profilePictureUrl != null && !profilePictureUrl.isEmpty()) {
+            Glide.with(holder.itemView.getContext())
+                .load(profilePictureUrl)
+                .circleCrop()
+                .into(holder.profilePicture);
+        } else {
+            holder.profilePicture.setImageResource(R.drawable.ic_person);
         }
     }
 
@@ -52,22 +65,31 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     }
 
     public void setUsers(List<User> users) {
-        this.users = users;
+        // Filter out the current user
+        List<User> filteredUsers = new ArrayList<>();
+        for (User user : users) {
+            if (!user.getUid().equals(currentUserId)) {
+                filteredUsers.add(user);
+            }
+        }
+        this.users = filteredUsers;
         notifyDataSetChanged();
     }
 
     class UserViewHolder extends RecyclerView.ViewHolder {
+        ImageView profilePicture;
         TextView userNameText;
         TextView userEmailText;
 
         UserViewHolder(View itemView) {
             super(itemView);
+            profilePicture = itemView.findViewById(R.id.profilePicture);
             userNameText = itemView.findViewById(R.id.userNameText);
             userEmailText = itemView.findViewById(R.id.userEmailText);
 
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
-                if (position != RecyclerView.NO_POSITION && listener != null) {
+                if (position != RecyclerView.NO_POSITION) {
                     listener.onUserClick(users.get(position));
                 }
             });
