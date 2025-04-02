@@ -24,6 +24,7 @@
             android:src="@drawable/nailment_arrow" />
 
         <TextView
+            android:id="@+id/chatTitleText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Chat"
@@ -33,19 +34,42 @@
             android:layout_marginStart="16dp"/>
     </LinearLayout>
 
-    <!-- User List -->
-    <TextView
+    <!-- Messages RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/messagesRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="8dp"/>
+
+    <!-- Message Input Area -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Users"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:padding="16dp"
-        android:background="#F5F5F5"/>
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:background="#F5F5F5">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/usersRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        <EditText
+            android:id="@+id/messageInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Type a message..."
+            android:inputType="textMultiLine|textCapSentences"
+            android:maxLines="4"
+            android:background="@android:color/white"
+            android:padding="8dp"
+            android:textLocale="lv"
+            android:imeOptions="actionSend"
+            android:importantForAutofill="no"/>
 
+        <Button
+            android:id="@+id/sendButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Send"/>
+
+    </LinearLayout>
 </LinearLayout> 

@@ -37,13 +37,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         User user = users.get(position);
         holder.userNameText.setText(user.getDisplayName());
         holder.userEmailText.setText(user.getEmail());
-        
-        // Don't show current user in the list
-        if (user.getUid().equals(currentUserId)) {
-            holder.itemView.setVisibility(View.GONE);
-        } else {
-            holder.itemView.setVisibility(View.VISIBLE);
-        }
     }
 
     @Override
@@ -52,7 +45,14 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     }
 
     public void setUsers(List<User> users) {
-        this.users = users;
+        // Filter out the current user
+        List<User> filteredUsers = new ArrayList<>();
+        for (User user : users) {
+            if (!user.getUid().equals(currentUserId)) {
+                filteredUsers.add(user);
+            }
+        }
+        this.users = filteredUsers;
         notifyDataSetChanged();
     }
 
