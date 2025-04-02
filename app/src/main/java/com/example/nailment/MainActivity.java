@@ -47,12 +47,19 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Chat button to navigate to ChatActivity
-        Button chatButton = findViewById(R.id.chatButton);
-        chatButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, ChatActivity.class);
+        // Add button click event for navigation to MapActivity
+        Button navigateToMapButton = findViewById(R.id.navigateToMapButton);
+        navigateToMapButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, MapActivity.class);
             startActivity(intent);
         });
+
+//        // Chat button to navigate to ChatActivity
+//        Button chatButton = findViewById(R.id.chatButton);
+//        chatButton.setOnClickListener(v -> {
+//            Intent intent = new Intent(MainActivity.this, ChatActivity.class);
+//            startActivity(intent);
+//        });
     }
 
     private void openWebPage(String url) {

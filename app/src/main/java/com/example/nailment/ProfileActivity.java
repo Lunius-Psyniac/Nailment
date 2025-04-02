@@ -47,11 +47,11 @@ public class ProfileActivity extends AppCompatActivity {
             bookButton.setText("Chat with " + manicurist.getName());
         }
 
-        // Handle book button click to open chat
-        bookButton.setOnClickListener(v -> {
-            Intent intent = new Intent(ProfileActivity.this, ChatActivity.class);
-            startActivity(intent);
-        });
+//        // Handle book button click to open chat
+//        bookButton.setOnClickListener(v -> {
+//            Intent intent = new Intent(ProfileActivity.this, ChatActivity.class);
+//            startActivity(intent);
+//        });
 
         // Bottom Navigation Bar
         findViewById(R.id.homeButton).setOnClickListener(v -> startActivity(new Intent(this, MainActivity.class)));

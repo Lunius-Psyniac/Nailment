@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Nailment</string>
+    <string name="google_maps_key">AIzaSyCyCeVKxoj_it7HN2cwPNnMYAh4z2m59VA</string>
 </resources>
