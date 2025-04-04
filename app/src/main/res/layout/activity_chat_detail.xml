@@ -40,6 +40,15 @@
             android:layout_gravity="center_vertical"
             android:textSize="18sp"
             android:textStyle="bold"/>
+
+        <Button
+            android:id="@+id/reviewButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Write Review"
+            android:textSize="14sp"
+            android:backgroundTint="#FFD700"/>
     </LinearLayout>
 
     <!-- Messages RecyclerView -->

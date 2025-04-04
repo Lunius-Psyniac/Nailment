@@ -13,7 +13,7 @@ import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class ProfileActivity extends AppCompatActivity {
-
+    private static final String TAG = "ProfileActivity";
     private TextView nameTextView, descriptionTextView, locationTextView, ratingCountTextView;
     private ImageView profileImageView;
     private Button bookButton;
@@ -32,6 +32,12 @@ public class ProfileActivity extends AppCompatActivity {
 
         // Retrieve the manicurist data from the Intent
         Manicurist manicurist = (Manicurist) getIntent().getSerializableExtra("manicurist");
+        if (manicurist == null) {
+            Log.e(TAG, "No manicurist data provided");
+            finish();
+            return;
+        }
+        Log.d(TAG, "Manicurist data: " + manicurist.getName() + ", ID: " + manicurist.getUid());
 
         // Set up views
         nameTextView = findViewById(R.id.profile_name);
@@ -43,37 +49,44 @@ public class ProfileActivity extends AppCompatActivity {
         ratingCountTextView = findViewById(R.id.rating_count);
 
         // Set manicurist data in views
-        if (manicurist != null) {
-            nameTextView.setText(manicurist.getName());
-            descriptionTextView.setText(manicurist.getSelfDescription());
-            locationTextView.setText(manicurist.getLocation());
-            
-            // Set rating with logging
-            float rating = (float) manicurist.getAvgRating();
-            Log.d("ProfileActivity", "Setting rating for " + manicurist.getName() + ": " + rating);
-            ratingBar.setRating(rating);
+        nameTextView.setText(manicurist.getName());
+        descriptionTextView.setText(manicurist.getSelfDescription());
+        locationTextView.setText(manicurist.getLocation());
+        
+        // Set rating with logging
+        float rating = (float) manicurist.getAvgRating();
+        Log.d(TAG, "Setting rating for " + manicurist.getName() + ": " + rating);
+        ratingBar.setRating(rating);
 
-            // Set rating count
-            int ratingCount = manicurist.getRatingCount();
-            String ratingText = String.format("(%d %s)", ratingCount, ratingCount == 1 ? "rating" : "reviews");
-            ratingCountTextView.setText(ratingText);
-            Log.d("ProfileActivity", "Setting rating count for " + manicurist.getName() + ": " + ratingText);
+        // Set rating count
+        int ratingCount = manicurist.getRatingCount();
+        String ratingText = String.format("(%d %s)", ratingCount, ratingCount == 1 ? "rating" : "reviews");
+        ratingCountTextView.setText(ratingText);
+        Log.d(TAG, "Setting rating count for " + manicurist.getName() + ": " + ratingText);
 
-            // Load profile picture using Glide
-            if (manicurist.getProfilePictureLink() != null && !manicurist.getProfilePictureLink().isEmpty()) {
-                Glide.with(this)
-                    .load(manicurist.getProfilePictureLink())
-                    .circleCrop()
-                    .placeholder(R.drawable.placeholder_image)
-                    .error(R.drawable.placeholder_image)
-                    .into(profileImageView);
-            } else {
-                profileImageView.setImageResource(R.drawable.placeholder_image);
-            }
-
-            // Set up chat button text
-            bookButton.setText("Chat with " + manicurist.getName());
+        // Load profile picture using Glide
+        if (manicurist.getProfilePictureLink() != null && !manicurist.getProfilePictureLink().isEmpty()) {
+            Glide.with(this)
+                .load(manicurist.getProfilePictureLink())
+                .circleCrop()
+                .placeholder(R.drawable.placeholder_image)
+                .error(R.drawable.placeholder_image)
+                .into(profileImageView);
+        } else {
+            profileImageView.setImageResource(R.drawable.placeholder_image);
         }
+
+        // Set up chat button text
+        bookButton.setText("Chat with " + manicurist.getName());
+
+        // Set up read reviews button
+        Button readReviewsButton = findViewById(R.id.read_reviews_button);
+        readReviewsButton.setOnClickListener(v -> {
+            Log.d(TAG, "Opening reviews for manicurist: " + manicurist.getUid());
+            Intent intent = new Intent(ProfileActivity.this, ReviewsActivity.class);
+            intent.putExtra("manicurist_id", manicurist.getUid());
+            startActivity(intent);
+        });
 
         // Handle book button click to open chat
         bookButton.setOnClickListener(v -> {

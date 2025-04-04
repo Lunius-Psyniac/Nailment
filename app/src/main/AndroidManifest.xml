@@ -50,6 +50,7 @@
         <activity android:name=".ChatActivity" />
         <activity android:name=".ChatDetailActivity" />
         <activity android:name=".CameraActivity" />
+        <activity android:name=".ReviewsActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
