@@ -60,11 +60,11 @@ public class AuthActivity extends AppCompatActivity {
         });
 
         loginButton.setOnClickListener(v -> {
-            String email = emailInput.getText().toString();
-            String password = passwordInput.getText().toString();
+            String email = emailInput.getText().toString().trim();
+            String password = passwordInput.getText().toString().trim();
 
             if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(AuthActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AuthActivity.this, "Please enter email and password", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -79,12 +79,19 @@ public class AuthActivity extends AppCompatActivity {
             isLoginMode = !isLoginMode;
             loginButton.setText(isLoginMode ? "Login" : "Register");
             registerButton.setText(isLoginMode ? "Need an account? Register" : "Already have an account? Login");
-            
-            // Show/hide registration fields
-            nameInput.setVisibility(isLoginMode ? View.GONE : View.VISIBLE);
-            userTypeGroup.setVisibility(isLoginMode ? View.GONE : View.VISIBLE);
-            manicuristFields.setVisibility(View.GONE);
+            toggleRegistrationFields(!isLoginMode);
         });
+
+        toggleRegistrationFields(false); // Start in login mode by default
+    }
+
+    private void toggleRegistrationFields(boolean show) {
+        int visibility = show ? View.VISIBLE : View.GONE;
+        nameInput.setVisibility(visibility);
+        userTypeGroup.setVisibility(visibility);
+        manicuristFields.setVisibility(View.GONE); // only show if "Manicurist" selected
+        profilePictureLinkInput.setVisibility(visibility);
+        selfDescriptionInput.setVisibility(visibility);
     }
 
     private void loginUser(String email, String password) {
@@ -95,37 +102,34 @@ public class AuthActivity extends AppCompatActivity {
                         navigateToMain();
                     } else {
                         Log.e("AuthActivity", "Login failed: " + task.getException().getMessage());
-                        Toast.makeText(AuthActivity.this, 
-                            "Authentication failed: " + task.getException().getMessage(),
-                            Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AuthActivity.this,
+                                "Authentication failed: " + task.getException().getMessage(),
+                                Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
     private void registerUser() {
-        String email = emailInput.getText().toString();
-        String password = passwordInput.getText().toString();
-        String name = nameInput.getText().toString();
-        String profilePictureLink = profilePictureLinkInput.getText().toString();
-        String selfDescription = selfDescriptionInput.getText().toString();
+        String email = emailInput.getText().toString().trim();
+        String password = passwordInput.getText().toString().trim();
+        String name = nameInput.getText().toString().trim();
+        String profilePictureLink = profilePictureLinkInput.getText().toString().trim();
+        String selfDescription = selfDescriptionInput.getText().toString().trim();
 
-        // Validate common fields
-        if (email.isEmpty() || password.isEmpty() || name.isEmpty() || 
-            profilePictureLink.isEmpty() || selfDescription.isEmpty()) {
+        if (email.isEmpty() || password.isEmpty() || name.isEmpty() ||
+                profilePictureLink.isEmpty() || selfDescription.isEmpty()) {
             Toast.makeText(AuthActivity.this, "Please fill in all required fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Check user type selection
         int selectedType = userTypeGroup.getCheckedRadioButtonId();
         if (selectedType == -1) {
             Toast.makeText(AuthActivity.this, "Please select a user type", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Validate type-specific fields
         if (selectedType == R.id.manicuristTypeRadio) {
-            String location = locationInput.getText().toString();
+            String location = locationInput.getText().toString().trim();
             if (location.isEmpty()) {
                 Toast.makeText(AuthActivity.this, "Please fill in your location", Toast.LENGTH_SHORT).show();
                 return;
@@ -133,8 +137,7 @@ public class AuthActivity extends AppCompatActivity {
         }
 
         Log.d("AuthActivity", "Starting registration process for email: " + email);
-        
-        // Create the authentication user
+
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
@@ -143,52 +146,44 @@ public class AuthActivity extends AppCompatActivity {
                         if (firebaseUser != null) {
                             String uid = firebaseUser.getUid();
                             String userType = selectedType == R.id.manicuristTypeRadio ? "MANICURIST" : "USER";
-                            
-                            // Create user object with common fields
+
                             User user = new User(uid, email, name, userType);
                             user.setProfilePictureLink(profilePictureLink);
                             user.setSelfDescription(selfDescription);
-                            
-                            // Add type-specific fields
+
                             if (userType.equals("MANICURIST")) {
-                                user.setLocation(locationInput.getText().toString());
+                                user.setLocation(locationInput.getText().toString().trim());
                                 user.setAvgRating(0.0);
                             }
-                            
-                            // Get database reference
-                            FirebaseDatabase database = FirebaseDatabase.getInstance();
-                            database.getReference()
-                                .child("users")
-                                .child(uid)
-                                .setValue(user)
-                                .addOnSuccessListener(aVoid -> {
-                                    Log.d("AuthActivity", "User created in database successfully");
-                                    Toast.makeText(AuthActivity.this, 
-                                        "Registration successful!", 
-                                        Toast.LENGTH_SHORT).show();
-                                    navigateToMain();
-                                })
-                                .addOnFailureListener(e -> {
-                                    Log.e("AuthActivity", "Database Error: " + e.getMessage());
-                                    Toast.makeText(AuthActivity.this,
-                                        "Account created but profile setup incomplete. Please try again later.",
-                                        Toast.LENGTH_LONG).show();
-                                    navigateToMain();
-                                });
-                        } else {
-                            Log.e("AuthActivity", "FirebaseUser is null after successful registration");
-                            Toast.makeText(AuthActivity.this,
-                                "Registration error: User creation failed",
-                                Toast.LENGTH_SHORT).show();
+
+                            FirebaseDatabase.getInstance()
+                                    .getReference()
+                                    .child("users")
+                                    .child(uid)
+                                    .setValue(user)
+                                    .addOnSuccessListener(aVoid -> {
+                                        Log.d("AuthActivity", "User created in database successfully");
+                                        Toast.makeText(AuthActivity.this,
+                                                "Registration successful!",
+                                                Toast.LENGTH_SHORT).show();
+                                        navigateToMain();
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Log.e("AuthActivity", "Database Error: " + e.getMessage());
+                                        Toast.makeText(AuthActivity.this,
+                                                "Account created but profile setup incomplete. Please try again later.",
+                                                Toast.LENGTH_LONG).show();
+                                        navigateToMain();
+                                    });
                         }
                     } else {
                         Exception exception = task.getException();
-                        Log.e("AuthActivity", "Registration failed: " + 
-                            (exception != null ? exception.getMessage() : "Unknown error"));
+                        Log.e("AuthActivity", "Registration failed: " +
+                                (exception != null ? exception.getMessage() : "Unknown error"));
                         Toast.makeText(AuthActivity.this,
-                            "Registration failed: " + 
-                            (exception != null ? exception.getMessage() : "Unknown error"),
-                            Toast.LENGTH_SHORT).show();
+                                "Registration failed: " +
+                                        (exception != null ? exception.getMessage() : "Unknown error"),
+                                Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -198,4 +193,4 @@ public class AuthActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
-} 
+}
