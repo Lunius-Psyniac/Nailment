@@ -1,23 +1,26 @@
 package com.example.nailment;
 
 public class SettingOption {
+    private String title;
+    private Type type;
+
     public enum Type {
         PRIVACY_POLICY,
         NOTIFICATIONS,
         APPEARANCE,
-        HELP
+        HELP,
+        LOCATION_PERMISSION,
+        CAMERA_PERMISSION,
+        GALLERY_PERMISSION
     }
 
-    private final String name;
-    private final Type type;
-
-    public SettingOption(String name, Type type) {
-        this.name = name;
+    public SettingOption(String title, Type type) {
+        this.title = title;
         this.type = type;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
     public Type getType() {

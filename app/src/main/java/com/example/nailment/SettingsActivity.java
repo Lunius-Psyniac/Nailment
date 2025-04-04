@@ -1,6 +1,7 @@
 package com.example.nailment;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.content.res.Configuration;
@@ -10,15 +11,23 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.chip.Chip;
+import android.Manifest;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SettingsActivity extends AppCompatActivity implements SettingsAdapter.OnSettingChangeListener {
 
+    private static final int LOCATION_PERMISSION_REQUEST = 1001;
+    private static final int CAMERA_PERMISSION_REQUEST = 1002;
+    private static final int GALLERY_PERMISSION_REQUEST = 1003;
+    
     private RecyclerView settingsRecyclerView;
     private List<SettingOption> settingsList;
 
@@ -51,6 +60,9 @@ public class SettingsActivity extends AppCompatActivity implements SettingsAdapt
         list.add(new SettingOption("Privacy Policy", SettingOption.Type.PRIVACY_POLICY));
         list.add(new SettingOption("Notifications", SettingOption.Type.NOTIFICATIONS));
         list.add(new SettingOption("Dark Mode", SettingOption.Type.APPEARANCE));
+        list.add(new SettingOption("Location Permission", SettingOption.Type.LOCATION_PERMISSION));
+        list.add(new SettingOption("Camera Permission", SettingOption.Type.CAMERA_PERMISSION));
+        list.add(new SettingOption("Gallery Permission", SettingOption.Type.GALLERY_PERMISSION));
         list.add(new SettingOption("Help", SettingOption.Type.HELP));
         return list;
     }
@@ -58,7 +70,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsAdapt
     @Override
     public boolean isNotificationsEnabled() {
         return getSharedPreferences("app_settings", MODE_PRIVATE)
-                .getBoolean("notifications_enabled", true); // Default is true
+                .getBoolean("notifications_enabled", true);
     }
 
     @Override
@@ -82,31 +94,82 @@ public class SettingsActivity extends AppCompatActivity implements SettingsAdapt
     public void handleSettingClick(SettingOption setting) {
         switch (setting.getType()) {
             case PRIVACY_POLICY:
-                // Show privacy policy popup
                 showPrivacyPolicy();
                 break;
             case HELP:
-                // Open support website
                 openHelpWebsite();
+                break;
+            case LOCATION_PERMISSION:
+                showPermissionDialog(Manifest.permission.ACCESS_FINE_LOCATION, 
+                    "Location access is needed to find nearby manicurists", 
+                    LOCATION_PERMISSION_REQUEST);
+                break;
+            case CAMERA_PERMISSION:
+                showPermissionDialog(Manifest.permission.CAMERA, 
+                    "Camera access is needed for AR nail try-on", 
+                    CAMERA_PERMISSION_REQUEST);
+                break;
+            case GALLERY_PERMISSION:
+                showPermissionDialog(Manifest.permission.READ_EXTERNAL_STORAGE, 
+                    "Gallery access is needed to save nail designs", 
+                    GALLERY_PERMISSION_REQUEST);
                 break;
         }
     }
 
+    private void showPermissionDialog(String permission, String message, int requestCode) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Permission Required")
+               .setMessage(message)
+               .setPositiveButton("Allow", (dialog, which) -> {
+                   ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);
+               })
+               .setNegativeButton("Deny", (dialog, which) -> {
+                   dialog.dismiss();
+               })
+               .setNeutralButton("Settings", (dialog, which) -> {
+                   Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                   Uri uri = Uri.fromParts("package", getPackageName(), null);
+                   intent.setData(uri);
+                   startActivity(intent);
+               });
+        builder.create().show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            // Permission granted
+            String message = "Permission granted successfully";
+            switch (requestCode) {
+                case LOCATION_PERMISSION_REQUEST:
+                    message = "Location permission granted";
+                    break;
+                case CAMERA_PERMISSION_REQUEST:
+                    message = "Camera permission granted";
+                    break;
+                case GALLERY_PERMISSION_REQUEST:
+                    message = "Gallery permission granted";
+                    break;
+            }
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        } else {
+            // Permission denied
+            Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void showPrivacyPolicy() {
-        // Privacy policy content
         String privacyPolicyText = "Privacy Policy\n\n" +
                 "This is a sample privacy policy. It explains how we collect, use, and protect your data. " +
                 "Your privacy is important to us, and we are committed to safeguarding your information.";
 
-        // Create an AlertDialog for privacy policy
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Privacy Policy");
         builder.setMessage(privacyPolicyText);
         builder.setPositiveButton("Close", (dialog, which) -> dialog.dismiss());
-
-        // Show the dialog
-        AlertDialog dialog = builder.create();
-        dialog.show();
+        builder.create().show();
     }
 
     private void openHelpWebsite() {
