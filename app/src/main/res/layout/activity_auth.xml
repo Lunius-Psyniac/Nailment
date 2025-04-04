@@ -10,13 +10,15 @@
         android:padding="16dp"
         android:gravity="center">
 
+        <!-- Login/Register Toggle -->
         <RadioGroup
             android:id="@+id/userTypeGroup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="16dp"
+            android:visibility="gone">
 
             <RadioButton
                 android:id="@+id/userTypeRadio"
@@ -32,6 +34,7 @@
                 android:text="Manicurist"/>
         </RadioGroup>
 
+        <!-- Common fields for both modes -->
         <EditText
             android:id="@+id/emailInput"
             android:layout_width="match_parent"
@@ -48,22 +51,24 @@
             android:inputType="textPassword"
             android:layout_marginBottom="8dp"/>
 
+        <!-- Registration fields (hidden in login mode) -->
         <EditText
             android:id="@+id/nameInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Name"
             android:inputType="textPersonName"
-            android:layout_marginBottom="8dp"/>
+            android:layout_marginBottom="8dp"
+            android:visibility="gone"/>
 
-        <!-- Common fields for both types -->
         <EditText
             android:id="@+id/profilePictureLinkInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Profile Picture Link"
             android:inputType="textUri"
-            android:layout_marginBottom="8dp"/>
+            android:layout_marginBottom="8dp"
+            android:visibility="gone"/>
 
         <EditText
             android:id="@+id/selfDescriptionInput"
@@ -72,7 +77,8 @@
             android:hint="Self Description"
             android:inputType="textMultiLine"
             android:minLines="3"
-            android:layout_marginBottom="8dp"/>
+            android:layout_marginBottom="8dp"
+            android:visibility="gone"/>
 
         <!-- Manicurist specific fields -->
         <LinearLayout

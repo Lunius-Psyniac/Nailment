@@ -83,8 +83,17 @@ public class AuthActivity extends AppCompatActivity {
             // Show/hide registration fields
             nameInput.setVisibility(isLoginMode ? View.GONE : View.VISIBLE);
             userTypeGroup.setVisibility(isLoginMode ? View.GONE : View.VISIBLE);
+            profilePictureLinkInput.setVisibility(isLoginMode ? View.GONE : View.VISIBLE);
+            selfDescriptionInput.setVisibility(isLoginMode ? View.GONE : View.VISIBLE);
             manicuristFields.setVisibility(View.GONE);
         });
+
+        // Set initial visibility
+        nameInput.setVisibility(View.GONE);
+        userTypeGroup.setVisibility(View.GONE);
+        profilePictureLinkInput.setVisibility(View.GONE);
+        selfDescriptionInput.setVisibility(View.GONE);
+        manicuristFields.setVisibility(View.GONE);
     }
 
     private void loginUser(String email, String password) {

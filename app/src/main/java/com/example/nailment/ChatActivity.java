@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,57 +20,105 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChatActivity extends AppCompatActivity implements UserAdapter.OnUserClickListener {
+public class ChatActivity extends AppCompatActivity {
     private static final String TAG = "ChatActivity";
     private RecyclerView usersRecyclerView;
+    private RecyclerView messagesRecyclerView;
     private UserAdapter userAdapter;
+    private MessageAdapter messageAdapter;
     private DatabaseReference usersRef;
+    private DatabaseReference messagesRef;
     private FirebaseAuth mAuth;
+    private FirebaseDatabase database;
+    private String currentChatId;
+    private String initialMessage;
+    private TextView messageInput;
+    private View userListContainer;
+    private View chatContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        // Initialize Firebase
         mAuth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
 
-        // Check if we have a manicurist to chat with
-        Manicurist manicurist = (Manicurist) getIntent().getSerializableExtra("manicurist");
-        if (manicurist != null) {
-            // Directly open chat with the manicurist
-            openChatWithManicurist(manicurist);
+        // Check if user is authenticated
+        if (mAuth.getCurrentUser() == null) {
+            Log.e(TAG, "User is not authenticated");
+            Toast.makeText(this, "You must be logged in to use chat", Toast.LENGTH_SHORT).show();
+            finish();
             return;
         }
 
+        // Get chat partner name and chat ID from intent
+        String chatPartnerName = getIntent().getStringExtra("chat_partner_name");
+        currentChatId = getIntent().getStringExtra("chat_id");
+        initialMessage = getIntent().getStringExtra("initial_message");
+
+        // Set up back button
         ImageButton backButton = findViewById(R.id.backButton);
-        backButton.setOnClickListener(view -> finish());
-        
-        // Initialize Firebase Database references
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        usersRef = database.getReference("users");
+        backButton.setOnClickListener(v -> finish());
+
+        // Set up chat title
+        TextView chatTitle = findViewById(R.id.chatTitle);
+        if (chatPartnerName != null) {
+            chatTitle.setText(chatPartnerName);
+        }
 
         // Initialize views
+        userListContainer = findViewById(R.id.userListContainer);
+        chatContainer = findViewById(R.id.chatContainer);
+        
+        // Initialize RecyclerView for users
         usersRecyclerView = findViewById(R.id.usersRecyclerView);
-
-        // Setup RecyclerView
-        userAdapter = new UserAdapter(this);
         usersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        userAdapter = new UserAdapter(this);
         usersRecyclerView.setAdapter(userAdapter);
+        
+        // Initialize RecyclerView for messages
+        messagesRecyclerView = findViewById(R.id.messagesRecyclerView);
+        messagesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        messageAdapter = new MessageAdapter();
+        messagesRecyclerView.setAdapter(messageAdapter);
 
-        // Load users
-        loadUsers();
+        // Initialize message input
+        messageInput = findViewById(R.id.messageInput);
+        Button sendButton = findViewById(R.id.sendButton);
+        sendButton.setOnClickListener(v -> sendMessage());
+
+        // If we have a chat ID, show chat view
+        if (currentChatId != null) {
+            showChatView();
+            checkChatAccessAndLoadMessages(currentChatId);
+            
+            // If we have an initial message, send it
+            if (initialMessage != null && !initialMessage.isEmpty()) {
+                messageInput.setText(initialMessage);
+                sendMessage();
+            }
+        } else {
+            // Show user list if no specific chat
+            showUserListView();
+            loadUsers();
+        }
     }
 
-    private void openChatWithManicurist(Manicurist manicurist) {
-        Intent intent = new Intent(this, ChatDetailActivity.class);
-        intent.putExtra("chat_partner_name", manicurist.getName());
-        intent.putExtra("chat_partner_id", manicurist.getUid());
-        startActivity(intent);
-        finish(); // Close the ChatActivity since we're going directly to chat
+    private void showChatView() {
+        userListContainer.setVisibility(View.GONE);
+        chatContainer.setVisibility(View.VISIBLE);
+    }
+
+    private void showUserListView() {
+        userListContainer.setVisibility(View.VISIBLE);
+        chatContainer.setVisibility(View.GONE);
     }
 
     private void loadUsers() {
         Log.d(TAG, "Loading users...");
+        usersRef = database.getReference("users");
         usersRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -100,11 +149,125 @@ public class ChatActivity extends AppCompatActivity implements UserAdapter.OnUse
         });
     }
 
-    @Override
-    public void onUserClick(User user) {
-        Intent intent = new Intent(this, ChatDetailActivity.class);
-        intent.putExtra("chat_partner_name", user.getName());
-        intent.putExtra("chat_partner_id", user.getUid());
-        startActivity(intent);
+    private void loadMessages(String chatId) {
+        Log.d(TAG, "Loading messages for chat ID: " + chatId);
+        messagesRef = database.getReference("chats").child(chatId).child("messages");
+        Log.d(TAG, "Messages reference path: " + messagesRef.toString());
+        
+        messagesRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d(TAG, "Messages data changed. Number of messages: " + dataSnapshot.getChildrenCount());
+                List<Message> messages = new ArrayList<>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Log.d(TAG, "Processing message with key: " + snapshot.getKey());
+                    Message message = snapshot.getValue(Message.class);
+                    if (message != null) {
+                        Log.d(TAG, "Message loaded: " + message.getText() + " from " + message.getUserName());
+                        messages.add(message);
+                    } else {
+                        Log.e(TAG, "Failed to convert snapshot to Message object for key: " + snapshot.getKey());
+                        Log.e(TAG, "Snapshot value: " + snapshot.getValue().toString());
+                    }
+                }
+                Log.d(TAG, "Total messages loaded: " + messages.size());
+                messageAdapter.setMessages(messages);
+                if (!messages.isEmpty()) {
+                    messagesRecyclerView.scrollToPosition(messages.size() - 1);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e(TAG, "Error loading messages: " + databaseError.getMessage());
+                Log.e(TAG, "Error code: " + databaseError.getCode());
+                Log.e(TAG, "Error details: " + databaseError.getDetails());
+                Toast.makeText(ChatActivity.this, 
+                    "Error loading messages: " + databaseError.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void sendMessage() {
+        String messageText = messageInput.getText().toString().trim();
+        if (messageText.isEmpty() || currentChatId == null || mAuth.getCurrentUser() == null) {
+            Log.e(TAG, "Cannot send message: " + 
+                  (messageText.isEmpty() ? "Message is empty" : "") +
+                  (currentChatId == null ? "Chat ID is null" : "") +
+                  (mAuth.getCurrentUser() == null ? "User is not authenticated" : ""));
+            return;
+        }
+
+        // Get current user's email as username
+        String userName = mAuth.getCurrentUser().getEmail();
+        if (userName == null) {
+            userName = "User";
+        }
+
+        Log.d(TAG, "Sending message: '" + messageText + "' to chat: " + currentChatId);
+        Log.d(TAG, "Current user ID: " + mAuth.getCurrentUser().getUid());
+        Log.d(TAG, "Current user name: " + userName);
+
+        // Create message with correct constructor parameters
+        Message message = new Message(
+            messageText,
+            mAuth.getCurrentUser().getUid(),
+            userName
+        );
+
+        Log.d(TAG, "Message object created. Text: " + message.getText() + 
+              ", User ID: " + message.getUserId() + 
+              ", User Name: " + message.getUserName());
+
+        messagesRef.push().setValue(message)
+            .addOnSuccessListener(aVoid -> {
+                messageInput.setText("");
+                Log.d(TAG, "Message sent successfully to path: " + messagesRef.toString());
+            })
+            .addOnFailureListener(e -> {
+                Log.e(TAG, "Error sending message: " + e.getMessage());
+                Log.e(TAG, "Error details: " + e.getCause());
+                Toast.makeText(ChatActivity.this, 
+                    "Error sending message: " + e.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+            });
+    }
+
+    private void checkChatAccessAndLoadMessages(String chatId) {
+        Log.d(TAG, "Checking access to chat: " + chatId);
+        
+        // First check if the chat exists
+        database.getReference("chats").child(chatId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Log.d(TAG, "Chat exists, loading messages");
+                    loadMessages(chatId);
+                } else {
+                    Log.d(TAG, "Chat does not exist, creating it");
+                    // Create the chat structure
+                    database.getReference("chats").child(chatId).child("messages").setValue(null)
+                        .addOnSuccessListener(aVoid -> {
+                            Log.d(TAG, "Chat structure created successfully");
+                            loadMessages(chatId);
+                        })
+                        .addOnFailureListener(e -> {
+                            Log.e(TAG, "Failed to create chat structure: " + e.getMessage());
+                            Toast.makeText(ChatActivity.this, 
+                                "Error creating chat: " + e.getMessage(),
+                                Toast.LENGTH_SHORT).show();
+                        });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e(TAG, "Error checking chat access: " + databaseError.getMessage());
+                Toast.makeText(ChatActivity.this, 
+                    "Error accessing chat: " + databaseError.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 } 
