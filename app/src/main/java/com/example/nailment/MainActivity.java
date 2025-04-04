@@ -41,12 +41,14 @@ import androidx.activity.result.contract.ActivityResultContracts;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private FusedLocationProviderClient fusedLocationClient;
-    private PlacesClient placesClient;
     private static final int SEARCH_RADIUS = 5000; // 5km radius
     private List<ImageView> salonImageViews;
     private List<TextView> salonNameViews;
     private List<String> salonPhotoUrls;
     private List<String> salonNames;
+    private List<ImageView> designImageViews;
+    private static final String SEARCH_QUERY = "manicurist nail designs";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
             }
             Places.initialize(getApplicationContext(), apiKey);
         }
-        placesClient = Places.createClient(this);
+        PlacesClient placesClient = Places.createClient(this);
 
         // Initialize fused location provider
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -79,6 +81,14 @@ public class MainActivity extends AppCompatActivity {
         salonNameViews.add(findViewById(R.id.salonName2));
         salonNameViews.add(findViewById(R.id.salonName3));
         salonNameViews.add(findViewById(R.id.salonName4));
+
+        designImageViews = new ArrayList<>();
+        designImageViews.add(findViewById(R.id.design1));
+        designImageViews.add(findViewById(R.id.design2));
+        designImageViews.add(findViewById(R.id.design3));
+        designImageViews.add(findViewById(R.id.design4));
+
+        fetchNailDesignImages();
 
         salonPhotoUrls = new ArrayList<>();
         salonNames = new ArrayList<>();
@@ -240,4 +250,52 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         startActivity(intent);
     }
+    private void fetchNailDesignImages() {
+        String apiKey = getString(R.string.google_search_key);
+        String cx = getString(R.string.google_search_cx);
+        String url = "https://www.googleapis.com/customsearch/v1?q=" + SEARCH_QUERY +
+                "&cx=" + cx + "&searchType=image&num=4&key=" + apiKey;
+
+        new Thread(() -> {
+            try {
+                URL requestUrl = new URL(url);
+                HttpURLConnection connection = (HttpURLConnection) requestUrl.openConnection();
+                connection.setRequestMethod("GET");
+
+                InputStreamReader reader = new InputStreamReader(connection.getInputStream());
+                BufferedReader bufferedReader = new BufferedReader(reader);
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    response.append(line);
+                }
+                bufferedReader.close();
+
+                JSONObject jsonResponse = new JSONObject(response.toString());
+                JSONArray items = jsonResponse.getJSONArray("items");
+
+                List<String> imageUrls = new ArrayList<>();
+                for (int i = 0; i < items.length() && i < 4; i++) {
+                    imageUrls.add(items.getJSONObject(i).getString("link"));
+                }
+
+                runOnUiThread(() -> updateDesignImages(imageUrls));
+
+            } catch (Exception e) {
+                Log.e(TAG, "Error fetching nail design images", e);
+                runOnUiThread(() -> Toast.makeText(this, "Failed to load nail designs", Toast.LENGTH_SHORT).show());
+            }
+        }).start();
+    }
+    private void updateDesignImages(List<String> imageUrls) {
+        for (int i = 0; i < designImageViews.size(); i++) {
+            if (i < imageUrls.size()) {
+                Glide.with(this).load(imageUrls.get(i)).into(designImageViews.get(i));
+            } else {
+                designImageViews.get(i).setImageResource(R.drawable.placeholder_image);
+            }
+        }
+    }
+
+
 }
