@@ -5,15 +5,17 @@
     android:layout_height="wrap_content"
     android:padding="8dp"
     android:background="@drawable/button_background"
-    android:layout_marginBottom="10dp"
-    >
+    android:layout_marginBottom="10dp">
 
     <!-- Manicurist Image -->
     <ImageView
         android:id="@+id/manicuristImage"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_marginEnd="8dp"
+        android:scaleType="centerCrop"
+        android:background="@drawable/circle_background"
+        android:padding="2dp"
         android:src="@drawable/placeholder_image"
         android:contentDescription="Manicurist Image" />
 
@@ -31,27 +33,42 @@
             android:layout_height="wrap_content"
             android:text="Name"
             android:textStyle="bold"
-            android:textSize="25dp"
+            android:textSize="18sp"
             android:fontFamily="@font/anticdidone_regular"/>
 
-        <!-- Manicurist Services -->
-        <TextView
-            android:id="@+id/manicuristServices"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Services"
-            android:textStyle="bold"
-            android:textSize="20dp"
-            android:fontFamily="@font/anticdidone_regular"/>
-
-        <!-- Manicurist Work Location -->
+        <!-- Manicurist Location -->
         <TextView
             android:id="@+id/manicuristLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Location"
-            android:textStyle="bold"
-            android:textSize="20dp"
+            android:textSize="14sp"
+            android:textColor="#666666"
+            android:layout_marginTop="2dp"
+            android:fontFamily="@font/anticdidone_regular"/>
+
+        <!-- Rating Bar -->
+        <RatingBar
+            android:id="@+id/manicuristRating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:isIndicator="true"
+            android:numStars="5"
+            android:stepSize="0.5"
+            android:layout_marginTop="4dp"
+            android:progressTint="#FFD700"
+            android:progressBackgroundTint="#CCCCCC"/>
+
+        <!-- Manicurist Description -->
+        <TextView
+            android:id="@+id/manicuristDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Description"
+            android:textSize="14sp"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:layout_marginTop="4dp"
             android:fontFamily="@font/anticdidone_regular"/>
     </LinearLayout>
 

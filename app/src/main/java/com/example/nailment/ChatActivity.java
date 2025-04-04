@@ -33,6 +33,14 @@ public class ChatActivity extends AppCompatActivity implements UserAdapter.OnUse
 
         mAuth = FirebaseAuth.getInstance();
 
+        // Check if we have a manicurist to chat with
+        Manicurist manicurist = (Manicurist) getIntent().getSerializableExtra("manicurist");
+        if (manicurist != null) {
+            // Directly open chat with the manicurist
+            openChatWithManicurist(manicurist);
+            return;
+        }
+
         ImageButton backButton = findViewById(R.id.backButton);
         backButton.setOnClickListener(view -> finish());
         
@@ -50,6 +58,14 @@ public class ChatActivity extends AppCompatActivity implements UserAdapter.OnUse
 
         // Load users
         loadUsers();
+    }
+
+    private void openChatWithManicurist(Manicurist manicurist) {
+        Intent intent = new Intent(this, ChatDetailActivity.class);
+        intent.putExtra("chat_partner_name", manicurist.getName());
+        intent.putExtra("chat_partner_id", manicurist.getUid());
+        startActivity(intent);
+        finish(); // Close the ChatActivity since we're going directly to chat
     }
 
     private void loadUsers() {
