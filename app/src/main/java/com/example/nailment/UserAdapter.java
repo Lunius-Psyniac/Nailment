@@ -1,5 +1,7 @@
 package com.example.nailment;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,29 +10,21 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
-import com.google.firebase.auth.FirebaseAuth;
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
     private List<User> users = new ArrayList<>();
-    private final OnUserClickListener listener;
-    private final String currentUserId;
+    private Context context;
 
-    public interface OnUserClickListener {
-        void onUserClick(User user);
-    }
-
-    public UserAdapter(OnUserClickListener listener) {
-        this.listener = listener;
-        this.currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    public UserAdapter(Context context) {
+        this.context = context;
     }
 
     @NonNull
     @Override
     public UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_user, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_user, parent, false);
         return new UserViewHolder(view);
     }
 
@@ -57,6 +51,19 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         } else {
             holder.profilePicture.setImageResource(R.drawable.ic_person);
         }
+
+        // Set click listener to open chat with this user
+        holder.itemView.setOnClickListener(v -> {
+            // Create a chat ID using user's name
+            String chatId = user.getName().toLowerCase().replace(" ", "_");
+            
+            // Open chat activity with this user
+            Intent intent = new Intent(context, ChatActivity.class);
+            intent.putExtra("chat_partner_name", user.getName());
+            intent.putExtra("chat_id", chatId);
+            intent.putExtra("chat_partner_id", user.getUid());
+            context.startActivity(intent);
+        });
     }
 
     @Override
@@ -65,18 +72,11 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     }
 
     public void setUsers(List<User> users) {
-        // Filter out the current user
-        List<User> filteredUsers = new ArrayList<>();
-        for (User user : users) {
-            if (!user.getUid().equals(currentUserId)) {
-                filteredUsers.add(user);
-            }
-        }
-        this.users = filteredUsers;
+        this.users = users;
         notifyDataSetChanged();
     }
 
-    class UserViewHolder extends RecyclerView.ViewHolder {
+    static class UserViewHolder extends RecyclerView.ViewHolder {
         ImageView profilePicture;
         TextView userNameText;
         TextView userEmailText;
@@ -86,13 +86,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             profilePicture = itemView.findViewById(R.id.profilePicture);
             userNameText = itemView.findViewById(R.id.userNameText);
             userEmailText = itemView.findViewById(R.id.userEmailText);
-
-            itemView.setOnClickListener(v -> {
-                int position = getAdapterPosition();
-                if (position != RecyclerView.NO_POSITION) {
-                    listener.onUserClick(users.get(position));
-                }
-            });
         }
     }
 } 

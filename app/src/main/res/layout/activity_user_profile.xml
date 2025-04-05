@@ -39,63 +39,6 @@
         android:padding="16dp"
         android:layout_margin="16dp">
 
-        <!-- Profile Info -->
-        <TextView
-            android:id="@+id/profile_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="35sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/anticdidone_regular"
-            />
-
-        <!-- Rating Bar and Count Container -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginTop="8dp">
-
-            <RatingBar
-                android:id="@+id/profile_rating"
-                style="@style/CustomRatingBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:isIndicator="true"
-                android:numStars="5"
-                android:stepSize="0.1"
-                android:progressTint="#FFD700"
-                android:progressBackgroundTint="#CCCCCC" />
-
-            <TextView
-                android:id="@+id/rating_count"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:textSize="14sp"
-                android:textColor="#666666" />
-
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/profile_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="25sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/anticdidone_regular"
-            android:layout_marginTop="8dp"/>
-
-        <TextView
-            android:id="@+id/profile_location"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="25sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/anticdidone_regular"
-            android:layout_marginTop="8dp"/>
-
         <!-- Profile Image -->
         <ImageView
             android:id="@+id/profile_image"
@@ -109,67 +52,50 @@
             android:src="@drawable/placeholder_image"
             android:contentDescription="Profile Image" />
 
-        <!-- Reviews Section -->
-
-        <!-- Bar chart and star ratings placeholder -->
-
-        <!-- Review Text -->
-
-        <!-- Read Reviews Button -->
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/read_reviews_button"
-            android:layout_width="274dp"
-            android:layout_height="79dp"
+        <!-- Profile Info -->
+        <TextView
+            android:id="@+id/profile_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="16dp"
-            android:background="@drawable/button_background"
-            android:backgroundTint="@null"
-            android:baselineAligned="false"
+            android:textSize="35sp"
             android:textStyle="bold"
-            android:fontFamily="@font/anticdidone_regular"
-            android:textSize="30sp"
-            android:textAllCaps="false"
-            android:layout_gravity="center"
-            android:padding="5dp"
-            android:text="Read Reviews"/>
+            android:fontFamily="@font/anticdidone_regular" />
 
-        <!-- Book Button -->
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/book_button"
-            android:layout_width="274dp"
-            android:layout_height="79dp"
-            android:layout_marginTop="48dp"
-            android:background="@drawable/button_background"
-            android:backgroundTint="@null"
-            android:baselineAligned="false"
-            android:textStyle="bold"
-            android:fontFamily="@font/anticdidone_regular"
-            android:textSize="30sp"
-            android:textAllCaps="false"
-            android:layout_gravity="center"
-            android:padding="5dp"
-            android:text="Book Appointment"/>
+        <TextView
+            android:id="@+id/profile_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:textSize="18sp"
+            android:fontFamily="@font/anticdidone_regular" />
 
-        <!-- Chat Button -->
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/chat_button"
-            android:layout_width="274dp"
-            android:layout_height="79dp"
+        <TextView
+            android:id="@+id/profile_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:textSize="18sp"
+            android:fontFamily="@font/anticdidone_regular" />
+
+        <TextView
+            android:id="@+id/profile_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:background="@drawable/button_background"
-            android:backgroundTint="@null"
-            android:baselineAligned="false"
-            android:textStyle="bold"
-            android:fontFamily="@font/anticdidone_regular"
-            android:textSize="30sp"
-            android:textAllCaps="false"
-            android:layout_gravity="center"
-            android:padding="5dp"/>
+            android:gravity="center"
+            android:textSize="16sp"
+            android:fontFamily="@font/anticdidone_regular" />
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
+
     <!-- Bottom Navigation Bar -->
     <LinearLayout
         android:layout_width="match_parent"
@@ -177,14 +103,14 @@
         android:background="@drawable/border"
         android:gravity="center"
         android:orientation="horizontal"
-        android:weightSum="3">
+        android:weightSum="4">
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:gravity="center">
 
             <ImageView
                 android:id="@+id/home_icon"
@@ -200,17 +126,17 @@
                 android:backgroundTint="#FFFFFF"
                 android:fontFamily="@font/anticdidone_regular"
                 android:text="Home"
-                android:textAllCaps="false"
                 android:textStyle="bold"
-                android:textSize="25sp" />
+                android:textAllCaps="false"
+                android:textSize="20sp" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:gravity="center">
 
             <ImageView
                 android:id="@+id/camera_icon"
@@ -228,15 +154,41 @@
                 android:text="AR Nails"
                 android:textStyle="bold"
                 android:textAllCaps="false"
-                android:textSize="25sp" />
+                android:textSize="20sp" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/chat_icon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:contentDescription="Chat icon"
+                android:src="@drawable/nailment_chat" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/chatButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#FFFFFF"
+                android:fontFamily="@font/anticdidone_regular"
+                android:text="Chat"
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
 
             <ImageView
                 android:id="@+id/settings_icon"
@@ -254,7 +206,7 @@
                 android:text="Settings"
                 android:textStyle="bold"
                 android:textAllCaps="false"
-                android:textSize="25sp" />
+                android:textSize="20sp" />
         </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</LinearLayout> 
