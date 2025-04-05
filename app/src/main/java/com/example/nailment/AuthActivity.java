@@ -56,6 +56,7 @@ public class AuthActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         storage = FirebaseStorage.getInstance();
+        mDatabase = FirebaseDatabase.getInstance();
 
         // Initialize views
         emailInput = findViewById(R.id.emailInput);
