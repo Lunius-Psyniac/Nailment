@@ -56,15 +56,23 @@
             android:inputType="textPersonName"
             android:layout_marginBottom="8dp"/>
 
-        <!-- Common fields for both types -->
-        <EditText
-            android:id="@+id/profilePictureLinkInput"
+        <Button
+            android:id="@+id/uploadPictureButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Profile Picture Link"
-            android:inputType="textUri"
+            android:text="Upload Profile Picture"
             android:layout_marginBottom="8dp"/>
 
+        <ImageView
+            android:id="@+id/profilePicturePreview"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="8dp"
+            android:scaleType="centerCrop"
+            android:visibility="gone"/>
+
+        <!-- Common fields for both types -->
         <EditText
             android:id="@+id/selfDescriptionInput"
             android:layout_width="match_parent"
