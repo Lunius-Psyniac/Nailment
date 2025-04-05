@@ -33,15 +33,7 @@
             android:textStyle="bold"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="16dp"/>
-            
-        <Button
-            android:id="@+id/reviewButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Review"
-            android:textColor="@android:color/white"
-            android:layout_gravity="center_vertical"
-            android:layout_marginEnd="16dp"/>
+
     </LinearLayout>
 
     <!-- User List Container -->

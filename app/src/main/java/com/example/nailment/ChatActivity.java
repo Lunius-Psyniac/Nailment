@@ -103,9 +103,6 @@ public class ChatActivity extends AppCompatActivity {
         Button sendButton = findViewById(R.id.sendButton);
         sendButton.setOnClickListener(v -> sendMessage());
 
-        // Set up review button
-        reviewButton.setOnClickListener(v -> showReviewDialog());
-
         // If we have a chat ID, show chat view
         if (currentChatId != null) {
             showChatView();
