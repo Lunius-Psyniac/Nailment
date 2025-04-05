@@ -24,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import android.os.Build;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,10 +67,12 @@ public class SettingsActivity extends AppCompatActivity implements SettingsAdapt
 
         // Sample settings data
         settingsList = createSettingsList();
+        Log.d("SettingsActivity", "Settings list size: " + settingsList.size());
 
         // Adapter setup
         SettingsAdapter adapter = new SettingsAdapter(settingsList, this);
         settingsRecyclerView.setAdapter(adapter);
+        Log.d("SettingsActivity", "Adapter set with " + settingsList.size() + " items");
 
         findViewById(R.id.homeButton).setOnClickListener(v -> startActivity(new Intent(this, MainActivity.class)));
         findViewById(R.id.settingsButton).setOnClickListener(v -> startActivity(new Intent(this, SettingsActivity.class)));
@@ -85,6 +88,13 @@ public class SettingsActivity extends AppCompatActivity implements SettingsAdapt
         list.add(new SettingOption("Gallery Permission", SettingOption.Type.GALLERY_PERMISSION));
         list.add(new SettingOption("Help", SettingOption.Type.HELP));
         list.add(new SettingOption("Deactivate Account", SettingOption.Type.DEACTIVATE_ACCOUNT));
+        list.add(new SettingOption("Log out", SettingOption.Type.LOGOUT));
+        
+        // Log the settings list
+        for (SettingOption option : list) {
+            Log.d("SettingsActivity", "Setting: " + option.getTitle() + " - Type: " + option.getType());
+        }
+        
         return list;
     }
 
@@ -155,6 +165,9 @@ public class SettingsActivity extends AppCompatActivity implements SettingsAdapt
                 break;
             case DEACTIVATE_ACCOUNT:
                 showDeactivateAccountDialog();
+                break;
+            case LOGOUT:
+                showLogoutDialog();
                 break;
         }
     }
@@ -242,6 +255,22 @@ public class SettingsActivity extends AppCompatActivity implements SettingsAdapt
                 Uri uri = Uri.fromParts("package", getPackageName(), null);
                 intent.setData(uri);
                 startActivity(intent);
+            })
+            .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+            .show();
+    }
+
+    private void showLogoutDialog() {
+        new AlertDialog.Builder(this)
+            .setTitle("Log out")
+            .setMessage("Are you sure you want to log out?")
+            .setPositiveButton("Log out", (dialog, which) -> {
+                mAuth.signOut();
+                Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(this, AuthActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
             })
             .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
             .show();
