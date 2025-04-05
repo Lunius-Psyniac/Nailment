@@ -258,10 +258,20 @@ public class MainActivity extends AppCompatActivity {
             TextView nameView = salonNameViews.get(i);
 
             if (i < salonNames.size()) {
-                nameView.setText(salonNames.get(i));
+                String salonName = salonNames.get(i);
+                nameView.setText(salonName);
                 nameView.setVisibility(View.VISIBLE);
+                
+                // Add click listener to open Google search for the salon
+                final String finalSalonName = salonName;
+                imageView.setOnClickListener(v -> {
+                    String searchQuery = "https://www.google.com/search?q=" + Uri.encode(finalSalonName + " nail salon");
+                    openWebPage(searchQuery);
+                });
             } else {
                 nameView.setVisibility(View.GONE);
+                // Remove click listener if no salon name
+                imageView.setOnClickListener(null);
             }
 
             if (i < salonPhotoUrls.size() && salonPhotoUrls.get(i) != null) {
@@ -270,7 +280,6 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 imageView.setImageResource(R.drawable.placeholder_image); // Default image
             }
-
         }
     }
 
