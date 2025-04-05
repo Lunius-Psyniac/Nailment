@@ -33,13 +33,10 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/settingsRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="458dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_margin="8dp" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:layout_weight="1" />
     <!-- Bottom Navigation Bar -->
     <LinearLayout
         android:layout_width="match_parent"

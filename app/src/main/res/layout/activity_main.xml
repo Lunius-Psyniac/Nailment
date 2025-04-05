@@ -345,7 +345,7 @@
         android:background="@drawable/border"
         android:gravity="center"
         android:orientation="horizontal"
-        android:weightSum="4">
+        android:weightSum="5">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -429,6 +429,37 @@
                 android:backgroundTint="#FFFFFF"
                 android:fontFamily="@font/anticdidone_regular"
                 android:text="Chat"
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                android:textSize="20sp"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/profile_icon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:contentDescription="Profile icon"
+                android:src="@drawable/nailment_camera" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/profileButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#FFFFFF"
+                android:fontFamily="@font/anticdidone_regular"
+                android:text="Profile"
                 android:textStyle="bold"
                 android:textAllCaps="false"
                 android:textSize="20sp"

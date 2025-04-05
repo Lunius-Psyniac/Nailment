@@ -1,20 +1,19 @@
 package com.example.nailment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.ToggleButton;
-
+import android.widget.Switch;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.List;
 
-public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.ViewHolder> {
+public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.SettingViewHolder> {
+
     private final List<SettingOption> settings;
-    private final OnSettingChangeListener settingChangeListener;
+    private final OnSettingChangeListener listener;
 
     public interface OnSettingChangeListener {
         boolean isNotificationsEnabled();
@@ -23,46 +22,55 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.ViewHo
         void toggleDarkMode(boolean enable);
     }
 
-    public SettingsAdapter(List<SettingOption> settings, OnSettingChangeListener settingChangeListener) {
+    public SettingsAdapter(List<SettingOption> settings, OnSettingChangeListener listener) {
         this.settings = settings;
-        this.settingChangeListener = settingChangeListener;
+        this.listener = listener;
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public SettingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.setting_item, parent, false);
-        return new ViewHolder(view);
+                .inflate(R.layout.item_setting, parent, false);
+        return new SettingViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull SettingViewHolder holder, int position) {
         SettingOption setting = settings.get(position);
-        holder.titleTextView.setText(setting.getName());
+        Log.d("SettingsAdapter", "Binding setting at position " + position + ": " + setting.getTitle());
+        holder.titleTextView.setText(setting.getTitle());
 
-        switch (setting.getType()) {
-            case NOTIFICATIONS:
-                holder.toggleButton.setVisibility(View.VISIBLE);
-                holder.toggleButton.setChecked(settingChangeListener.isNotificationsEnabled());
-                holder.toggleButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                    settingChangeListener.toggleNotifications(isChecked);
-                });
-                break;
-            case APPEARANCE:
-                holder.toggleButton.setVisibility(View.VISIBLE);
-                holder.toggleButton.setChecked(settingChangeListener.isDarkModeEnabled());
-                holder.toggleButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                    settingChangeListener.toggleDarkMode(isChecked);
-                });
-                break;
-            default:
-                holder.toggleButton.setVisibility(View.GONE);
-                break;
+        // Show/hide switch based on setting type
+        if (setting.getType() == SettingOption.Type.NOTIFICATIONS ||
+            setting.getType() == SettingOption.Type.APPEARANCE) {
+            holder.switchView.setVisibility(View.VISIBLE);
+            Log.d("SettingsAdapter", "Showing switch for: " + setting.getTitle());
+            
+            // Set initial switch state
+            boolean isEnabled = setting.getType() == SettingOption.Type.NOTIFICATIONS ?
+                    listener.isNotificationsEnabled() :
+                    listener.isDarkModeEnabled();
+            holder.switchView.setChecked(isEnabled);
+
+            // Set switch listener
+            holder.switchView.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (setting.getType() == SettingOption.Type.NOTIFICATIONS) {
+                    listener.toggleNotifications(isChecked);
+                } else if (setting.getType() == SettingOption.Type.APPEARANCE) {
+                    listener.toggleDarkMode(isChecked);
+                }
+            });
+        } else {
+            holder.switchView.setVisibility(View.GONE);
+            Log.d("SettingsAdapter", "Hiding switch for: " + setting.getTitle());
         }
 
+        // Set click listener for the entire item
         holder.itemView.setOnClickListener(v -> {
-            if (setting.getType() == SettingOption.Type.PRIVACY_POLICY || setting.getType() == SettingOption.Type.HELP) {
+            Log.d("SettingsAdapter", "Item clicked: " + setting.getTitle());
+            if (setting.getType() != SettingOption.Type.NOTIFICATIONS &&
+                setting.getType() != SettingOption.Type.APPEARANCE) {
                 ((SettingsActivity) holder.itemView.getContext()).handleSettingClick(setting);
             }
         });
@@ -73,14 +81,14 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.ViewHo
         return settings.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    static class SettingViewHolder extends RecyclerView.ViewHolder {
         TextView titleTextView;
-        ToggleButton toggleButton;
+        Switch switchView;
 
-        public ViewHolder(View itemView) {
+        SettingViewHolder(View itemView) {
             super(itemView);
-            titleTextView = itemView.findViewById(R.id.setting_title);
-            toggleButton = itemView.findViewById(R.id.toggle_button);
+            titleTextView = itemView.findViewById(R.id.settingTitle);
+            switchView = itemView.findViewById(R.id.settingSwitch);
         }
     }
 }
