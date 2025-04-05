@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -59,6 +60,9 @@ public class ChatActivity extends AppCompatActivity {
         initialMessage = getIntent().getStringExtra("initial_message");
         String chatPartnerId = getIntent().getStringExtra("chat_partner_id");
 
+        // Debug chat ID format
+        debugChatIdFormat();
+
         // Set up back button
         ImageButton backButton = findViewById(R.id.backButton);
         backButton.setOnClickListener(v -> finish());
@@ -100,14 +104,6 @@ public class ChatActivity extends AppCompatActivity {
                 messageInput.setText(initialMessage);
                 sendMessage();
             }
-
-            // Open ChatDetailActivity with the chat partner ID
-            Intent intent = new Intent(this, ChatDetailActivity.class);
-            intent.putExtra("chat_partner_name", chatPartnerName);
-            intent.putExtra("chat_id", currentChatId);
-            intent.putExtra("chat_partner_id", chatPartnerId);
-            startActivity(intent);
-            finish();
         } else {
             // Show user list if no specific chat
             showUserListView();
@@ -163,7 +159,9 @@ public class ChatActivity extends AppCompatActivity {
         messagesRef = database.getReference("chats").child(chatId).child("messages");
         Log.d(TAG, "Messages reference path: " + messagesRef.toString());
         
-        messagesRef.addValueEventListener(new ValueEventListener() {
+        String currentUserId = mAuth.getCurrentUser().getUid();
+        
+        messagesRef.orderByChild("timestamp").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.d(TAG, "Messages data changed. Number of messages: " + dataSnapshot.getChildrenCount());
@@ -172,8 +170,14 @@ public class ChatActivity extends AppCompatActivity {
                     Log.d(TAG, "Processing message with key: " + snapshot.getKey());
                     Message message = snapshot.getValue(Message.class);
                     if (message != null) {
-                        Log.d(TAG, "Message loaded: " + message.getText() + " from " + message.getUserName());
-                        messages.add(message);
+                        // Only add messages where current user is either sender or receiver
+                        if (message.getSenderId().equals(currentUserId) || 
+                            message.getReceiverId().equals(currentUserId)) {
+                            Log.d(TAG, "Message loaded: " + message.getText() + 
+                                  " from " + message.getSenderId() + 
+                                  " to " + message.getReceiverId());
+                            messages.add(message);
+                        }
                     } else {
                         Log.e(TAG, "Failed to convert snapshot to Message object for key: " + snapshot.getKey());
                         Log.e(TAG, "Snapshot value: " + snapshot.getValue().toString());
@@ -216,51 +220,150 @@ public class ChatActivity extends AppCompatActivity {
 
         String currentUserId = mAuth.getCurrentUser().getUid();
         String chatId = currentChatId;
+        
+        // Add very visible error logs
+        Log.e(TAG, "ERROR CHECK - Current user ID: " + currentUserId);
+        Log.e(TAG, "ERROR CHECK - Chat ID: " + chatId);
+        Log.e(TAG, "ERROR CHECK - Chat ID length: " + (chatId != null ? chatId.length() : "null"));
+        Log.e(TAG, "ERROR CHECK - Current user ID length: " + (currentUserId != null ? currentUserId.length() : "null"));
+        
+        if (chatId != null && currentUserId != null) {
+            Log.e(TAG, "ERROR CHECK - Chat ID contains current user ID: " + chatId.contains(currentUserId));
+            Log.e(TAG, "ERROR CHECK - Chat ID contains underscore: " + chatId.contains("_"));
+            if (chatId.contains("_")) {
+                String[] parts = chatId.split("_");
+                Log.e(TAG, "ERROR CHECK - Number of parts after split: " + parts.length);
+                for (int i = 0; i < parts.length; i++) {
+                    Log.e(TAG, "ERROR CHECK - Part " + i + ": " + parts[i]);
+                }
+            }
+        }
 
-        // Check if recipient's account is active
-        String recipientId = chatId.replace(currentUserId, "").replace("_", "");
-        database.getReference("users").child(recipientId).child("accountActive").get()
-                .addOnSuccessListener(dataSnapshot -> {
-                    Boolean isActive = dataSnapshot.getValue(Boolean.class);
-                    // Only block if accountActive is explicitly false
-                    if (isActive != null && isActive == false) {
+        // First verify the current user exists in the database
+        database.getReference("users").child(currentUserId).get()
+            .addOnSuccessListener(currentUserSnapshot -> {
+                if (!currentUserSnapshot.exists()) {
+                    Log.e(TAG, "ERROR CHECK - Current user does not exist in database: " + currentUserId);
+                    Toast.makeText(ChatActivity.this, 
+                        "Error: User account not found", 
+                        Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // Extract the other user's ID from the chat ID
+                final String otherUserId;
+                
+                // Check if chatId contains the current user ID
+                if (chatId != null && currentUserId != null) {
+                    // Try different formats of chat ID
+                    if (chatId.contains(currentUserId)) {
+                        // Remove the current user ID and any underscores to get the other user's ID
+                        otherUserId = chatId.replace(currentUserId, "").replace("_", "");
+                        Log.e(TAG, "ERROR CHECK - Extracted recipient ID using replace: " + otherUserId);
+                    } else if (chatId.contains("_")) {
+                        // Try to extract from format like "user1_user2"
+                        String[] parts = chatId.split("_");
+                        if (parts.length == 2) {
+                            otherUserId = parts[0].equals(currentUserId) ? parts[1] : parts[0];
+                            Log.e(TAG, "ERROR CHECK - Extracted recipient ID from underscore format: " + otherUserId);
+                        } else {
+                            Log.e(TAG, "ERROR CHECK - Invalid chat ID format (multiple underscores): " + chatId);
+                            Toast.makeText(ChatActivity.this, 
+                                "Error: Invalid chat format", 
+                                Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    } else {
+                        Log.e(TAG, "ERROR CHECK - Chat ID does not contain current user ID or underscore: " + chatId);
                         Toast.makeText(ChatActivity.this, 
-                            "Cannot send message: Recipient's account is deactivated", 
+                            "Error: Invalid chat format", 
                             Toast.LENGTH_SHORT).show();
                         return;
                     }
-
-                    // Get current user's email as username
-                    String userName = mAuth.getCurrentUser().getEmail();
-                    if (userName == null) {
-                        userName = "User";
-                    }
-
-                    // Recipient is active or accountActive is not set, proceed with sending message
-                    Message message = new Message(
-                        messageText,
-                        currentUserId,
-                        userName
-                    );
-
-                    messagesRef.push().setValue(message)
-                            .addOnSuccessListener(aVoid -> {
-                                Log.d(TAG, "Message sent successfully");
-                                messageInput.setText("");
-                            })
-                            .addOnFailureListener(e -> {
-                                Log.e(TAG, "Failed to send message: " + e.getMessage());
-                                Toast.makeText(ChatActivity.this, 
-                                    "Failed to send message: " + e.getMessage(), 
-                                    Toast.LENGTH_SHORT).show();
-                            });
-                })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Failed to check recipient status: " + e.getMessage());
+                } else {
+                    Log.e(TAG, "ERROR CHECK - Chat ID or current user ID is null");
                     Toast.makeText(ChatActivity.this, 
-                        "Failed to send message: " + e.getMessage(), 
+                        "Error: Invalid chat data", 
                         Toast.LENGTH_SHORT).show();
-                });
+                    return;
+                }
+                
+                if (otherUserId == null || otherUserId.isEmpty()) {
+                    Log.e(TAG, "ERROR CHECK - Failed to extract recipient ID");
+                    Toast.makeText(ChatActivity.this, 
+                        "Error: Could not identify recipient", 
+                        Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                
+                Log.e(TAG, "ERROR CHECK - Final extracted recipient ID: " + otherUserId);
+                
+                // Verify the other user exists in the database
+                database.getReference("users").child(otherUserId).get()
+                    .addOnSuccessListener(dataSnapshot -> {
+                        if (!dataSnapshot.exists()) {
+                            Log.e(TAG, "ERROR CHECK - Recipient user does not exist: " + otherUserId);
+                            Toast.makeText(ChatActivity.this, 
+                                "Cannot send message: Recipient not found", 
+                                Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        // Check if recipient's account is active
+                        Boolean isActive = dataSnapshot.child("accountActive").getValue(Boolean.class);
+                        if (isActive != null && isActive == false) {
+                            Toast.makeText(ChatActivity.this, 
+                                "Cannot send message: Recipient's account is deactivated", 
+                                Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        // Get the actual user ID from the database
+                        String recipientId = dataSnapshot.getKey();
+                        Log.e(TAG, "ERROR CHECK - Verified recipient ID from database: " + recipientId);
+
+                        // Create message with sender and receiver IDs
+                        Message message = new Message(
+                            messageText,
+                            currentUserId,
+                            recipientId
+                        );
+
+                        // Save message and update metadata
+                        DatabaseReference chatRef = database.getReference("chats").child(chatId);
+                        DatabaseReference messagesRef = chatRef.child("messages");
+                        DatabaseReference metadataRef = chatRef.child("metadata");
+
+                        messagesRef.push().setValue(message)
+                                .addOnSuccessListener(aVoid -> {
+                                    Log.e(TAG, "ERROR CHECK - Message sent successfully");
+                                    messageInput.setText("");
+                                    
+                                    // Update chat metadata
+                                    ChatMetadata metadata = new ChatMetadata();
+                                    metadata.updateLastMessage(message);
+                                    metadataRef.setValue(metadata);
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e(TAG, "ERROR CHECK - Failed to send message: " + e.getMessage());
+                                    Toast.makeText(ChatActivity.this, 
+                                        "Failed to send message: " + e.getMessage(), 
+                                        Toast.LENGTH_SHORT).show();
+                                });
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e(TAG, "ERROR CHECK - Failed to get recipient data: " + e.getMessage());
+                        Toast.makeText(ChatActivity.this, 
+                            "Failed to send message: " + e.getMessage(), 
+                            Toast.LENGTH_SHORT).show();
+                    });
+            })
+            .addOnFailureListener(e -> {
+                Log.e(TAG, "ERROR CHECK - Failed to get current user data: " + e.getMessage());
+                Toast.makeText(ChatActivity.this, 
+                    "Failed to send message: " + e.getMessage(), 
+                    Toast.LENGTH_SHORT).show();
+            });
     }
 
     private void checkChatAccessAndLoadMessages(String chatId) {
@@ -275,14 +378,110 @@ public class ChatActivity extends AppCompatActivity {
                     loadMessages(chatId);
                 } else {
                     Log.d(TAG, "Chat does not exist, creating it");
-                    // Create the chat structure
-                    database.getReference("chats").child(chatId).child("messages").setValue(null)
-                        .addOnSuccessListener(aVoid -> {
-                            Log.d(TAG, "Chat structure created successfully");
-                            loadMessages(chatId);
+                    String currentUserId = mAuth.getCurrentUser().getUid();
+                    
+                    Log.d(TAG, "Current user ID: " + currentUserId);
+                    Log.d(TAG, "Chat ID: " + chatId);
+                    
+                    // First verify the current user exists in the database
+                    database.getReference("users").child(currentUserId).get()
+                        .addOnSuccessListener(currentUserSnapshot -> {
+                            if (!currentUserSnapshot.exists()) {
+                                Log.e(TAG, "Current user does not exist in database: " + currentUserId);
+                                Toast.makeText(ChatActivity.this, 
+                                    "Error: User account not found", 
+                                    Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            
+                            // Extract the other user's ID from the chat ID
+                            final String otherUserId;
+                            
+                            // Check if chatId contains the current user ID
+                            if (chatId != null && currentUserId != null) {
+                                // Try different formats of chat ID
+                                if (chatId.contains(currentUserId)) {
+                                    // Remove the current user ID and any underscores to get the other user's ID
+                                    otherUserId = chatId.replace(currentUserId, "").replace("_", "");
+                                    Log.d(TAG, "Extracted recipient ID using replace: " + otherUserId);
+                                } else if (chatId.contains("_")) {
+                                    // Try to extract from format like "user1_user2"
+                                    String[] parts = chatId.split("_");
+                                    if (parts.length == 2) {
+                                        otherUserId = parts[0].equals(currentUserId) ? parts[1] : parts[0];
+                                        Log.d(TAG, "Extracted recipient ID from underscore format: " + otherUserId);
+                                    } else {
+                                        Log.e(TAG, "Invalid chat ID format (multiple underscores): " + chatId);
+                                        Toast.makeText(ChatActivity.this, 
+                                            "Error: Invalid chat format", 
+                                            Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+                                } else {
+                                    Log.e(TAG, "Chat ID does not contain current user ID or underscore: " + chatId);
+                                    Toast.makeText(ChatActivity.this, 
+                                        "Error: Invalid chat format", 
+                                        Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                            } else {
+                                Log.e(TAG, "Chat ID or current user ID is null");
+                                Toast.makeText(ChatActivity.this, 
+                                    "Error: Invalid chat data", 
+                                    Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            
+                            if (otherUserId == null || otherUserId.isEmpty()) {
+                                Log.e(TAG, "Failed to extract recipient ID");
+                                Toast.makeText(ChatActivity.this, 
+                                    "Error: Could not identify recipient", 
+                                    Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            
+                            Log.d(TAG, "Extracted recipient ID for new chat: " + otherUserId);
+                            
+                            // Verify the other user exists in the database
+                            database.getReference("users").child(otherUserId).get()
+                                .addOnSuccessListener(userSnapshot -> {
+                                    if (!userSnapshot.exists()) {
+                                        Log.e(TAG, "Other user does not exist: " + otherUserId);
+                                        Toast.makeText(ChatActivity.this, 
+                                            "Cannot create chat: User not found", 
+                                            Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+                                    
+                                    // Get the actual user ID from the database
+                                    String recipientId = userSnapshot.getKey();
+                                    Log.d(TAG, "Creating chat with user ID: " + recipientId);
+                                    
+                                    // Create chat metadata with actual database IDs
+                                    ChatMetadata metadata = new ChatMetadata(currentUserId, recipientId);
+                                    
+                                    // Create the chat structure with metadata
+                                    database.getReference("chats").child(chatId).setValue(metadata)
+                                        .addOnSuccessListener(aVoid -> {
+                                            Log.d(TAG, "Chat structure created successfully");
+                                            loadMessages(chatId);
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            Log.e(TAG, "Failed to create chat structure: " + e.getMessage());
+                                            Toast.makeText(ChatActivity.this, 
+                                                "Error creating chat: " + e.getMessage(),
+                                                Toast.LENGTH_SHORT).show();
+                                        });
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e(TAG, "Failed to get user data: " + e.getMessage());
+                                    Toast.makeText(ChatActivity.this, 
+                                        "Error creating chat: " + e.getMessage(),
+                                        Toast.LENGTH_SHORT).show();
+                                });
                         })
                         .addOnFailureListener(e -> {
-                            Log.e(TAG, "Failed to create chat structure: " + e.getMessage());
+                            Log.e(TAG, "Failed to get current user data: " + e.getMessage());
                             Toast.makeText(ChatActivity.this, 
                                 "Error creating chat: " + e.getMessage(),
                                 Toast.LENGTH_SHORT).show();
@@ -298,5 +497,80 @@ public class ChatActivity extends AppCompatActivity {
                     Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    /**
+     * Debug method to check the chat ID format
+     */
+    private void debugChatIdFormat() {
+        try {
+            Log.e(TAG, "===========================================");
+            Log.e(TAG, "============ CHAT ID DEBUG START ============");
+            
+            FirebaseUser currentUser = mAuth.getCurrentUser();
+            if (currentUser == null) {
+                Log.e(TAG, "ERROR: Current user is null!");
+                return;
+            }
+            
+            String currentUserId = currentUser.getUid();
+            String chatId = currentChatId;
+            
+            Log.e(TAG, "Current user ID: " + (currentUserId != null ? currentUserId : "NULL"));
+            Log.e(TAG, "Chat ID: " + (chatId != null ? chatId : "NULL"));
+            
+            if (chatId == null) {
+                Log.e(TAG, "ERROR: Chat ID is null!");
+                return;
+            }
+            
+            if (currentUserId == null) {
+                Log.e(TAG, "ERROR: Current user ID is null!");
+                return;
+            }
+            
+            Log.e(TAG, "Chat ID length: " + chatId.length());
+            Log.e(TAG, "Current user ID length: " + currentUserId.length());
+            Log.e(TAG, "Chat ID contains current user ID: " + chatId.contains(currentUserId));
+            Log.e(TAG, "Chat ID contains underscore: " + chatId.contains("_"));
+            
+            if (chatId.contains("_")) {
+                String[] parts = chatId.split("_");
+                Log.e(TAG, "Number of parts after split: " + parts.length);
+                for (int i = 0; i < parts.length; i++) {
+                    Log.e(TAG, "Part " + i + ": " + parts[i]);
+                }
+            }
+            
+            // Try to extract the other user ID
+            String otherUserId = null;
+            if (chatId.contains(currentUserId)) {
+                otherUserId = chatId.replace(currentUserId, "").replace("_", "");
+                Log.e(TAG, "Extracted recipient ID using replace: " + otherUserId);
+            } else if (chatId.contains("_")) {
+                String[] parts = chatId.split("_");
+                if (parts.length == 2) {
+                    otherUserId = parts[0].equals(currentUserId) ? parts[1] : parts[0];
+                    Log.e(TAG, "Extracted recipient ID from underscore format: " + otherUserId);
+                }
+            }
+            
+            // Print the chat ID format analysis
+            Log.e(TAG, "Chat ID Format Analysis:");
+            Log.e(TAG, "1. Is null? " + (chatId == null));
+            Log.e(TAG, "2. Is empty? " + (chatId != null && chatId.isEmpty()));
+            Log.e(TAG, "3. Contains current user ID? " + (chatId != null && chatId.contains(currentUserId)));
+            Log.e(TAG, "4. Contains underscore? " + (chatId != null && chatId.contains("_")));
+            if (chatId != null && chatId.contains("_")) {
+                Log.e(TAG, "5. Number of underscores: " + chatId.split("_").length);
+            }
+            
+            Log.e(TAG, "============ CHAT ID DEBUG END ============");
+            Log.e(TAG, "===========================================");
+            
+        } catch (Exception e) {
+            Log.e(TAG, "ERROR in debugChatIdFormat: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 } 
