@@ -48,7 +48,10 @@
         <activity android:name=".ListActivity" />
         <activity android:name=".ProfileActivity" />
         <activity android:name=".ChatActivity" />
+        <activity android:name=".ChatDetailActivity" />
         <activity android:name=".CameraActivity" />
+        <activity android:name=".ReviewsActivity" />
+        <activity android:name=".UserProfileActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
