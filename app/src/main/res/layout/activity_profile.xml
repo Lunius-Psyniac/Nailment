@@ -147,7 +147,7 @@
             android:textAllCaps="false"
             android:layout_gravity="center"
             android:padding="5dp"
-            android:text="Book Appointment Now"/>
+            android:text="Book Appointment"/>
 
         <!-- Chat Button -->
         <androidx.appcompat.widget.AppCompatButton

@@ -21,6 +21,9 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import android.os.Build;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +38,15 @@ public class SettingsActivity extends AppCompatActivity implements SettingsAdapt
     private List<SettingOption> settingsList;
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
+
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    Toast.makeText(this, "Location permission granted", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show();
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,19 +121,37 @@ public class SettingsActivity extends AppCompatActivity implements SettingsAdapt
                 openHelpWebsite();
                 break;
             case LOCATION_PERMISSION:
-                showPermissionDialog(Manifest.permission.ACCESS_FINE_LOCATION, 
-                    "Location access is needed to find nearby manicurists", 
-                    LOCATION_PERMISSION_REQUEST);
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED ||
+                    ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+                } else {
+                    showPermissionChangeDialog("Location");
+                }
                 break;
             case CAMERA_PERMISSION:
-                showPermissionDialog(Manifest.permission.CAMERA, 
-                    "Camera access is needed for AR nail try-on", 
-                    CAMERA_PERMISSION_REQUEST);
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) 
+                        == PackageManager.PERMISSION_GRANTED) {
+                    showPermissionChangeDialog("Camera");
+                } else {
+                    ActivityCompat.requestPermissions(this, 
+                        new String[]{Manifest.permission.CAMERA}, 
+                        CAMERA_PERMISSION_REQUEST);
+                }
                 break;
             case GALLERY_PERMISSION:
-                showPermissionDialog(Manifest.permission.READ_EXTERNAL_STORAGE, 
-                    "Gallery access is needed to save nail designs", 
-                    GALLERY_PERMISSION_REQUEST);
+                String galleryPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU 
+                    ? Manifest.permission.READ_MEDIA_IMAGES 
+                    : Manifest.permission.READ_EXTERNAL_STORAGE;
+                if (ContextCompat.checkSelfPermission(this, galleryPermission) 
+                        == PackageManager.PERMISSION_GRANTED) {
+                    showPermissionChangeDialog("Gallery");
+                } else {
+                    ActivityCompat.requestPermissions(this, 
+                        new String[]{galleryPermission}, 
+                        GALLERY_PERMISSION_REQUEST);
+                }
                 break;
             case DEACTIVATE_ACCOUNT:
                 showDeactivateAccountDialog();
@@ -160,25 +190,6 @@ public class SettingsActivity extends AppCompatActivity implements SettingsAdapt
                     Toast.makeText(this, "Failed to deactivate account: " + e.getMessage(), 
                                  Toast.LENGTH_SHORT).show();
                 });
-    }
-
-    private void showPermissionDialog(String permission, String message, int requestCode) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Permission Required")
-               .setMessage(message)
-               .setPositiveButton("Allow", (dialog, which) -> {
-                   ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);
-               })
-               .setNegativeButton("Deny", (dialog, which) -> {
-                   dialog.dismiss();
-               })
-               .setNeutralButton("Settings", (dialog, which) -> {
-                   Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                   Uri uri = Uri.fromParts("package", getPackageName(), null);
-                   intent.setData(uri);
-                   startActivity(intent);
-               });
-        builder.create().show();
     }
 
     @Override
@@ -220,5 +231,19 @@ public class SettingsActivity extends AppCompatActivity implements SettingsAdapt
     private void openHelpWebsite() {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com"));
         startActivity(browserIntent);
+    }
+
+    private void showPermissionChangeDialog(String permissionType) {
+        new AlertDialog.Builder(this)
+            .setTitle(permissionType + " Permission")
+            .setMessage("You have already granted " + permissionType.toLowerCase() + " permission. Would you like to change it in Settings?")
+            .setPositiveButton("Open Settings", (dialog, which) -> {
+                Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts("package", getPackageName(), null);
+                intent.setData(uri);
+                startActivity(intent);
+            })
+            .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+            .show();
     }
 }

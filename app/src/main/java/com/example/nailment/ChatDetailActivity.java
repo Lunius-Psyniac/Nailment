@@ -55,7 +55,7 @@ public class ChatDetailActivity extends AppCompatActivity {
         
         // Initialize Firebase Database references
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        messagesRef = database.getReference("messages");
+        messagesRef = database.getReference("chats");
         reviewsRef = database.getReference("reviews");
         DatabaseReference usersRef = database.getReference("users").child(chatPartnerId);
 
@@ -106,8 +106,12 @@ public class ChatDetailActivity extends AppCompatActivity {
         messagesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         messagesRecyclerView.setAdapter(messageAdapter);
 
-        // Generate chat ID
-        chatId = getChatId(currentUserId, chatPartnerId);
+        // Get chat ID from intent
+        chatId = getIntent().getStringExtra("chat_id");
+        if (chatId == null) {
+            // Generate chat ID if not provided
+            chatId = getChatId(currentUserId, chatPartnerId);
+        }
 
         // Load messages
         loadMessages();
@@ -220,7 +224,7 @@ public class ChatDetailActivity extends AppCompatActivity {
     }
 
     private void loadMessages() {
-        messagesRef.child(chatId).addValueEventListener(new ValueEventListener() {
+        messagesRef.child(chatId).child("messages").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<Message> messages = new ArrayList<>();
@@ -249,20 +253,17 @@ public class ChatDetailActivity extends AppCompatActivity {
         String userName = mAuth.getCurrentUser().getEmail();
         Message message = new Message(messageText, currentUserId, userName);
         
-        String messageId = messagesRef.child(chatId).push().getKey();
-        if (messageId != null) {
-            messagesRef.child(chatId).child(messageId).setValue(message)
-                .addOnSuccessListener(aVoid -> {
-                    messageInput.setText("");
-                    Log.d(TAG, "Message sent successfully");
-                })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error sending message: " + e.getMessage());
-                    Toast.makeText(ChatDetailActivity.this, 
-                        "Error sending message: " + e.getMessage(),
-                        Toast.LENGTH_LONG).show();
-                });
-        }
+        messagesRef.child(chatId).child("messages").push().setValue(message)
+            .addOnSuccessListener(aVoid -> {
+                messageInput.setText("");
+                Log.d(TAG, "Message sent successfully");
+            })
+            .addOnFailureListener(e -> {
+                Log.e(TAG, "Error sending message: " + e.getMessage());
+                Toast.makeText(ChatDetailActivity.this, 
+                    "Error sending message: " + e.getMessage(),
+                    Toast.LENGTH_LONG).show();
+            });
     }
 
     private String getChatId(String userId1, String userId2) {

@@ -68,16 +68,42 @@ public class ProfileActivity extends AppCompatActivity {
         descriptionTextView.setText(manicurist.getSelfDescription());
         locationTextView.setText(manicurist.getLocation());
         
+        // Set up real-time rating listener
+        database.getReference("users").child(manicurist.getUid())
+            .addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Manicurist updatedManicurist = dataSnapshot.getValue(Manicurist.class);
+                    if (updatedManicurist != null) {
+                        // Update rating
+                        float rating = (float) updatedManicurist.getAvgRating();
+                        Log.d(TAG, "Rating updated for " + updatedManicurist.getName() + ": " + rating);
+                        ratingBar.setRating(rating);
+
+                        // Update rating count
+                        int ratingCount = updatedManicurist.getRatingCount();
+                        String ratingText = String.format("(%d %s)", ratingCount, ratingCount == 1 ? "rating" : "reviews");
+                        ratingCountTextView.setText(ratingText);
+                        Log.d(TAG, "Rating count updated for " + updatedManicurist.getName() + ": " + ratingText);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.e(TAG, "Error listening to rating updates: " + databaseError.getMessage());
+                }
+            });
+        
         // Set rating with logging
         float rating = (float) manicurist.getAvgRating();
-        Log.d(TAG, "Setting rating for " + manicurist.getName() + ": " + rating);
+        Log.d(TAG, "Setting initial rating for " + manicurist.getName() + ": " + rating);
         ratingBar.setRating(rating);
 
         // Set rating count
         int ratingCount = manicurist.getRatingCount();
         String ratingText = String.format("(%d %s)", ratingCount, ratingCount == 1 ? "rating" : "reviews");
         ratingCountTextView.setText(ratingText);
-        Log.d(TAG, "Setting rating count for " + manicurist.getName() + ": " + ratingText);
+        Log.d(TAG, "Setting initial rating count for " + manicurist.getName() + ": " + ratingText);
 
         // Load profile picture using Glide
         if (manicurist.getProfilePictureLink() != null && !manicurist.getProfilePictureLink().isEmpty()) {
@@ -104,7 +130,18 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         // Handle book button click to open chat
-        chatButton.setOnClickListener(v -> showDateTimePicker());
+        chatButton.setOnClickListener(v -> {
+            // Create a chat ID using both user IDs to ensure uniqueness
+            String currentUserId = mAuth.getCurrentUser().getUid();
+            String chatId = currentUserId + "_" + manicurist.getUid();
+            
+            // Open chat activity with this manicurist
+            Intent intent = new Intent(ProfileActivity.this, ChatActivity.class);
+            intent.putExtra("chat_partner_name", manicurist.getName());
+            intent.putExtra("chat_id", chatId);
+            intent.putExtra("chat_partner_id", manicurist.getUid());
+            startActivity(intent);
+        });
 
         // Handle book appointment button click
         bookButton.setOnClickListener(v -> showDateTimePicker());
@@ -171,81 +208,17 @@ public class ProfileActivity extends AppCompatActivity {
             return;
         }
 
-        // Create a chat ID using manicurist's name
-        String chatId = manicurist.getName().toLowerCase().replace(" ", "_");
+        // Create a chat ID using both user IDs to ensure uniqueness
+        String currentUserId = mAuth.getCurrentUser().getUid();
+        String chatId = currentUserId + "_" + manicurist.getUid();
         Log.d(TAG, "Creating chat with ID: " + chatId);
         
-        // Get current user's email as username
-        String userName = mAuth.getCurrentUser().getEmail();
-        if (userName == null) {
-            userName = "User";
-        }
-        
-        // Create the message object with correct constructor parameters
-        Message chatMessage = new Message(
-            message,
-            mAuth.getCurrentUser().getUid(),
-            userName
-        );
-
-        Log.d(TAG, "Booking message created: " + message);
-
-        // First ensure the chat structure exists
-        database.getReference("chats").child(chatId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    Log.d(TAG, "Chat already exists, sending message");
-                    sendMessageToChat(chatId, chatMessage);
-                } else {
-                    Log.d(TAG, "Chat does not exist, creating it first");
-                    // Create the chat structure
-                    database.getReference("chats").child(chatId).child("messages").setValue(null)
-                        .addOnSuccessListener(aVoid -> {
-                            Log.d(TAG, "Chat structure created successfully, sending message");
-                            sendMessageToChat(chatId, chatMessage);
-                        })
-                        .addOnFailureListener(e -> {
-                            Log.e(TAG, "Failed to create chat structure: " + e.getMessage());
-                            Toast.makeText(ProfileActivity.this, 
-                                "Error creating chat: " + e.getMessage(),
-                                Toast.LENGTH_SHORT).show();
-                        });
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e(TAG, "Error checking chat: " + databaseError.getMessage());
-                Toast.makeText(ProfileActivity.this, 
-                    "Error accessing chat: " + databaseError.getMessage(),
-                    Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void sendMessageToChat(String chatId, Message message) {
-        // Save the message to Firebase
-        database.getReference()
-            .child("chats")
-            .child(chatId)
-            .child("messages")
-            .push()
-            .setValue(message)
-            .addOnSuccessListener(aVoid -> {
-                Log.d(TAG, "Booking message sent successfully");
-                // Navigate to chat activity with the booking message
-                Intent intent = new Intent(ProfileActivity.this, ChatActivity.class);
-                intent.putExtra("chat_partner_name", manicurist.getName());
-                intent.putExtra("chat_id", chatId);
-                intent.putExtra("initial_message", message.getText());
-                startActivity(intent);
-            })
-            .addOnFailureListener(e -> {
-                Log.e(TAG, "Failed to send booking message: " + e.getMessage());
-                Toast.makeText(ProfileActivity.this, 
-                    "Error sending message: " + e.getMessage(),
-                    Toast.LENGTH_SHORT).show();
-            });
+        // Navigate to chat activity with the booking message
+        Intent intent = new Intent(ProfileActivity.this, ChatActivity.class);
+        intent.putExtra("chat_partner_name", manicurist.getName());
+        intent.putExtra("chat_id", chatId);
+        intent.putExtra("chat_partner_id", manicurist.getUid());
+        intent.putExtra("initial_message", message);
+        startActivity(intent);
     }
 }

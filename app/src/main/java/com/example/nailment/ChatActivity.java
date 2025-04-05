@@ -57,6 +57,7 @@ public class ChatActivity extends AppCompatActivity {
         String chatPartnerName = getIntent().getStringExtra("chat_partner_name");
         currentChatId = getIntent().getStringExtra("chat_id");
         initialMessage = getIntent().getStringExtra("initial_message");
+        String chatPartnerId = getIntent().getStringExtra("chat_partner_id");
 
         // Set up back button
         ImageButton backButton = findViewById(R.id.backButton);
@@ -99,6 +100,14 @@ public class ChatActivity extends AppCompatActivity {
                 messageInput.setText(initialMessage);
                 sendMessage();
             }
+
+            // Open ChatDetailActivity with the chat partner ID
+            Intent intent = new Intent(this, ChatDetailActivity.class);
+            intent.putExtra("chat_partner_name", chatPartnerName);
+            intent.putExtra("chat_id", currentChatId);
+            intent.putExtra("chat_partner_id", chatPartnerId);
+            startActivity(intent);
+            finish();
         } else {
             // Show user list if no specific chat
             showUserListView();
