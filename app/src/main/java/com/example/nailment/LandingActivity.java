@@ -16,10 +16,10 @@ public class LandingActivity extends AppCompatActivity {
         SharedPreferences preferences = getSharedPreferences("appPreferences", MODE_PRIVATE);
         boolean isFirstLaunch = preferences.getBoolean("isFirstLaunch", true);
 
-//        if (!isFirstLaunch) {
-//            navigateToAuth();
-//            return;
-//        }
+        if (!isFirstLaunch) {
+            navigateToAuth();
+            return;
+        }
 
         setContentView(R.layout.activity_landing);
 
@@ -29,16 +29,14 @@ public class LandingActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Mark as not first launch and go to the auth page
                 preferences.edit().putBoolean("isFirstLaunch", false).apply();
-                Intent intent = new Intent(LandingActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
+                navigateToAuth();
             }
         });
     }
 
-//    private void navigateToAuth() {
-//        Intent intent = new Intent(LandingActivity.this, AuthActivity.class);
-//        startActivity(intent);
-//        finish();
-//    }
+    private void navigateToAuth() {
+        Intent intent = new Intent(LandingActivity.this, AuthActivity.class);
+        startActivity(intent);
+        finish();
+    }
 }
