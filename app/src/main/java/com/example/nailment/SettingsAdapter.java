@@ -1,5 +1,6 @@
 package com.example.nailment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,12 +38,14 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
     @Override
     public void onBindViewHolder(@NonNull SettingViewHolder holder, int position) {
         SettingOption setting = settings.get(position);
+        Log.d("SettingsAdapter", "Binding setting at position " + position + ": " + setting.getTitle());
         holder.titleTextView.setText(setting.getTitle());
 
         // Show/hide switch based on setting type
         if (setting.getType() == SettingOption.Type.NOTIFICATIONS ||
             setting.getType() == SettingOption.Type.APPEARANCE) {
             holder.switchView.setVisibility(View.VISIBLE);
+            Log.d("SettingsAdapter", "Showing switch for: " + setting.getTitle());
             
             // Set initial switch state
             boolean isEnabled = setting.getType() == SettingOption.Type.NOTIFICATIONS ?
@@ -60,10 +63,12 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
             });
         } else {
             holder.switchView.setVisibility(View.GONE);
+            Log.d("SettingsAdapter", "Hiding switch for: " + setting.getTitle());
         }
 
         // Set click listener for the entire item
         holder.itemView.setOnClickListener(v -> {
+            Log.d("SettingsAdapter", "Item clicked: " + setting.getTitle());
             if (setting.getType() != SettingOption.Type.NOTIFICATIONS &&
                 setting.getType() != SettingOption.Type.APPEARANCE) {
                 ((SettingsActivity) holder.itemView.getContext()).handleSettingClick(setting);
