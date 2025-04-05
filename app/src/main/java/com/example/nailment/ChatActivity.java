@@ -84,7 +84,6 @@ public class ChatActivity extends AppCompatActivity {
         // Initialize views
         userListContainer = findViewById(R.id.userListContainer);
         chatContainer = findViewById(R.id.chatContainer);
-        reviewButton = findViewById(R.id.reviewButton);
         
         // Initialize RecyclerView for users
         usersRecyclerView = findViewById(R.id.usersRecyclerView);

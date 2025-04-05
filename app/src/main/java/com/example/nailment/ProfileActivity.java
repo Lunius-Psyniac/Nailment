@@ -19,6 +19,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.DatabaseReference;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -213,6 +214,63 @@ public class ProfileActivity extends AppCompatActivity {
         String chatId = getChatId(currentUserId, manicurist.getUid());
         Log.d(TAG, "Creating chat with ID: " + chatId);
         
+        // First check if the chat exists and create it if it doesn't
+        database.getReference("chats").child(chatId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    // Chat exists, proceed to open chat activity
+                    openChatActivity(chatId, message);
+                } else {
+                    // Chat doesn't exist, create it first
+                    Log.d(TAG, "Chat doesn't exist, creating it first");
+                    createChatStructure(chatId, message);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e(TAG, "Error checking chat existence: " + databaseError.getMessage());
+                Toast.makeText(ProfileActivity.this, 
+                    "Error creating chat: " + databaseError.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void createChatStructure(String chatId, String message) {
+        String currentUserId = mAuth.getCurrentUser().getUid();
+        
+        // Create chat metadata
+        ChatMetadata metadata = new ChatMetadata(currentUserId, manicurist.getUid());
+        
+        // Create the chat structure with metadata and messages node
+        DatabaseReference chatRef = database.getReference("chats").child(chatId);
+        chatRef.child("metadata").setValue(metadata)
+            .addOnSuccessListener(aVoid -> {
+                // Initialize empty messages node
+                chatRef.child("messages").setValue(null)
+                    .addOnSuccessListener(messagesVoid -> {
+                        Log.d(TAG, "Chat structure created successfully");
+                        // Now open the chat activity with the initial message
+                        openChatActivity(chatId, message);
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e(TAG, "Failed to create messages node: " + e.getMessage());
+                        Toast.makeText(ProfileActivity.this, 
+                            "Error creating chat: " + e.getMessage(),
+                            Toast.LENGTH_SHORT).show();
+                    });
+            })
+            .addOnFailureListener(e -> {
+                Log.e(TAG, "Failed to create chat structure: " + e.getMessage());
+                Toast.makeText(ProfileActivity.this, 
+                    "Error creating chat: " + e.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+            });
+    }
+
+    private void openChatActivity(String chatId, String message) {
         // Navigate to chat activity with the booking message
         Intent intent = new Intent(ProfileActivity.this, ChatActivity.class);
         intent.putExtra("chat_partner_name", manicurist.getName());
