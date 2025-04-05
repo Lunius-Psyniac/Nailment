@@ -5,9 +5,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,6 +32,7 @@ public class ChatActivity extends AppCompatActivity {
     private MessageAdapter messageAdapter;
     private DatabaseReference usersRef;
     private DatabaseReference messagesRef;
+    private DatabaseReference reviewsRef;
     private FirebaseAuth mAuth;
     private FirebaseDatabase database;
     private String currentChatId;
@@ -36,6 +40,9 @@ public class ChatActivity extends AppCompatActivity {
     private TextView messageInput;
     private View userListContainer;
     private View chatContainer;
+    private Button reviewButton;
+    private String chatPartnerId;
+    private String currentUserName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +52,7 @@ public class ChatActivity extends AppCompatActivity {
         // Initialize Firebase
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
+        currentUserName = mAuth.getCurrentUser().getEmail();
 
         // Check if user is authenticated
         if (mAuth.getCurrentUser() == null) {
@@ -58,7 +66,7 @@ public class ChatActivity extends AppCompatActivity {
         String chatPartnerName = getIntent().getStringExtra("chat_partner_name");
         currentChatId = getIntent().getStringExtra("chat_id");
         initialMessage = getIntent().getStringExtra("initial_message");
-        String chatPartnerId = getIntent().getStringExtra("chat_partner_id");
+        chatPartnerId = getIntent().getStringExtra("chat_partner_id");
 
         // Debug chat ID format
         debugChatIdFormat();
@@ -76,6 +84,7 @@ public class ChatActivity extends AppCompatActivity {
         // Initialize views
         userListContainer = findViewById(R.id.userListContainer);
         chatContainer = findViewById(R.id.chatContainer);
+        reviewButton = findViewById(R.id.reviewButton);
         
         // Initialize RecyclerView for users
         usersRecyclerView = findViewById(R.id.usersRecyclerView);
@@ -93,6 +102,9 @@ public class ChatActivity extends AppCompatActivity {
         messageInput = findViewById(R.id.messageInput);
         Button sendButton = findViewById(R.id.sendButton);
         sendButton.setOnClickListener(v -> sendMessage());
+
+        // Set up review button
+        reviewButton.setOnClickListener(v -> showReviewDialog());
 
         // If we have a chat ID, show chat view
         if (currentChatId != null) {
@@ -124,31 +136,65 @@ public class ChatActivity extends AppCompatActivity {
     private void loadUsers() {
         Log.d(TAG, "Loading users...");
         usersRef = database.getReference("users");
-        usersRef.addValueEventListener(new ValueEventListener() {
+        String currentUserId = mAuth.getCurrentUser().getUid();
+        
+        // First get all chats where the current user is a participant
+        database.getReference("chats").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot chatsSnapshot) {
+                List<String> chatUserIds = new ArrayList<>();
+                
+                // Collect all user IDs from chats that have messages
+                for (DataSnapshot chatSnapshot : chatsSnapshot.getChildren()) {
+                    DataSnapshot messagesSnapshot = chatSnapshot.child("messages");
+                    if (messagesSnapshot.exists() && messagesSnapshot.getChildrenCount() > 0) {
+                        // Get the other user's ID from the chat ID
+                        String chatId = chatSnapshot.getKey();
+                        String otherUserId = null;
+                        
+                        if (chatId.contains(currentUserId)) {
+                            String[] parts = chatId.split("_");
+                            otherUserId = parts[0].equals(currentUserId) ? parts[1] : parts[0];
+                        }
+                        
+                        if (otherUserId != null && !otherUserId.isEmpty()) {
+                            chatUserIds.add(otherUserId);
+                        }
+                    }
+                }
+                
+                // Now load only the users with whom messages have been exchanged
+                usersRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.d(TAG, "Users data changed");
                 List<User> users = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     User user = snapshot.getValue(User.class);
-                    if (user != null) {
-                        Log.d(TAG, "Found user: " + user.getEmail() + " with ID: " + user.getUid());
+                            if (user != null && chatUserIds.contains(user.getUid())) {
+                                Log.d(TAG, "Found user with messages: " + user.getEmail() + " with ID: " + user.getUid());
                         users.add(user);
-                    } else {
-                        Log.w(TAG, "User data is null for snapshot: " + snapshot.getKey());
+                            }
+                        }
+                        Log.d(TAG, "Total users with messages found: " + users.size());
+                        userAdapter.setUsers(users);
                     }
-                }
-                Log.d(TAG, "Total users found: " + users.size());
-                userAdapter.setUsers(users);
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.e(TAG, "Error loading users: " + databaseError.getMessage());
+                        Toast.makeText(ChatActivity.this, 
+                            "Error loading users: " + databaseError.getMessage(),
+                            Toast.LENGTH_LONG).show();
+                    }
+                });
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.e(TAG, "Error loading users: " + databaseError.getMessage());
-                Log.e(TAG, "Error code: " + databaseError.getCode());
-                Log.e(TAG, "Error details: " + databaseError.getDetails());
+                Log.e(TAG, "Error loading chats: " + databaseError.getMessage());
                 Toast.makeText(ChatActivity.this, 
-                    "Error loading users: " + databaseError.getMessage(),
+                    "Error loading chats: " + databaseError.getMessage(),
                     Toast.LENGTH_LONG).show();
             }
         });
@@ -460,11 +506,22 @@ public class ChatActivity extends AppCompatActivity {
                                     // Create chat metadata with actual database IDs
                                     ChatMetadata metadata = new ChatMetadata(currentUserId, recipientId);
                                     
-                                    // Create the chat structure with metadata
-                                    database.getReference("chats").child(chatId).setValue(metadata)
+                                    // Create the chat structure with metadata and messages node
+                                    DatabaseReference chatRef = database.getReference("chats").child(chatId);
+                                    chatRef.child("metadata").setValue(metadata)
                                         .addOnSuccessListener(aVoid -> {
-                                            Log.d(TAG, "Chat structure created successfully");
-                                            loadMessages(chatId);
+                                            // Initialize empty messages node
+                                            chatRef.child("messages").setValue(null)
+                                                .addOnSuccessListener(messagesVoid -> {
+                                                    Log.d(TAG, "Chat structure created successfully");
+                                                    loadMessages(chatId);
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    Log.e(TAG, "Failed to create messages node: " + e.getMessage());
+                                                    Toast.makeText(ChatActivity.this, 
+                                                        "Error creating chat: " + e.getMessage(),
+                                                        Toast.LENGTH_SHORT).show();
+                                                });
                                         })
                                         .addOnFailureListener(e -> {
                                             Log.e(TAG, "Failed to create chat structure: " + e.getMessage());
@@ -487,9 +544,9 @@ public class ChatActivity extends AppCompatActivity {
                                 Toast.LENGTH_SHORT).show();
                         });
                 }
-            }
+    }
 
-            @Override
+    @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.e(TAG, "Error checking chat access: " + databaseError.getMessage());
                 Toast.makeText(ChatActivity.this, 
@@ -572,5 +629,97 @@ public class ChatActivity extends AppCompatActivity {
             Log.e(TAG, "ERROR in debugChatIdFormat: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private void showReviewDialog() {
+        if (chatPartnerId == null) {
+            Toast.makeText(this, "Cannot review: Chat partner not identified", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_review, null);
+        RatingBar ratingBar = dialogView.findViewById(R.id.review_rating_bar);
+        EditText commentInput = dialogView.findViewById(R.id.review_comment);
+
+        new AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setPositiveButton("Submit", (dialog, which) -> {
+                float rating = ratingBar.getRating();
+                String comment = commentInput.getText().toString().trim();
+                
+                if (!comment.isEmpty()) {
+                    submitReview(rating, comment);
+                } else {
+                    Toast.makeText(this, "Please write a comment", Toast.LENGTH_SHORT).show();
+                }
+            })
+            .setNegativeButton("Cancel", null)
+            .show();
+    }
+
+    private void submitReview(float rating, String comment) {
+        Log.d(TAG, "Submitting review for manicurist: " + chatPartnerId + " with rating: " + rating);
+        reviewsRef = database.getReference("reviews").child(chatPartnerId);
+        String reviewId = reviewsRef.push().getKey();
+        if (reviewId != null) {
+            Log.d(TAG, "Generated review ID: " + reviewId);
+            Review review = new Review(reviewId, mAuth.getCurrentUser().getUid(), chatPartnerId, currentUserName, rating, comment);
+            
+            reviewsRef.child(reviewId).setValue(review)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "Review submitted successfully");
+                    Toast.makeText(this, "Review submitted successfully", Toast.LENGTH_SHORT).show();
+                    updateManicuristRating(chatPartnerId, rating);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error submitting review: " + e.getMessage());
+                    Toast.makeText(this, "Error submitting review", Toast.LENGTH_SHORT).show();
+                });
+        } else {
+            Log.e(TAG, "Failed to generate review ID");
+        }
+    }
+
+    private void updateManicuristRating(String manicuristId, float newRating) {
+        Log.d(TAG, "Updating rating for manicurist: " + manicuristId + " with new rating: " + newRating);
+        DatabaseReference manicuristRef = database.getReference("users").child(manicuristId);
+        manicuristRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Manicurist manicurist = dataSnapshot.getValue(Manicurist.class);
+                if (manicurist != null) {
+                    double currentRating = manicurist.getAvgRating();
+                    int ratingCount = manicurist.getRatingCount();
+                    Log.d(TAG, "Current rating: " + currentRating + ", rating count: " + ratingCount);
+                    
+                    // Calculate new average rating
+                    double newAvgRating;
+                    if (ratingCount == 0) {
+                        // If this is the first rating, set it directly
+                        newAvgRating = newRating;
+                    } else {
+                        // Calculate weighted average for existing ratings
+                        newAvgRating = ((currentRating * ratingCount) + newRating) / (ratingCount + 1);
+                    }
+                    
+                    Log.d(TAG, "New average rating: " + newAvgRating);
+                    
+                    // Update manicurist's rating
+                    manicurist.setAvgRating(newAvgRating);
+                    manicurist.setRatingCount(ratingCount + 1);
+                    
+                    manicuristRef.setValue(manicurist)
+                        .addOnSuccessListener(aVoid -> Log.d(TAG, "Manicurist rating updated successfully"))
+                        .addOnFailureListener(e -> Log.e(TAG, "Error updating manicurist rating: " + e.getMessage()));
+                } else {
+                    Log.e(TAG, "Failed to get manicurist data");
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e(TAG, "Error updating manicurist rating: " + databaseError.getMessage());
+            }
+        });
     }
 } 

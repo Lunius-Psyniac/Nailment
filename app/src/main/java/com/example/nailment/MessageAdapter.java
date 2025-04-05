@@ -49,6 +49,23 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             holder.messageContainer.setLayoutParams(marginParams);
         }
 
+        // Format and set the timestamp
+        String timestamp = message.getTimestamp();
+        if (timestamp != null && !timestamp.isEmpty()) {
+            try {
+                long timeInMillis = Long.parseLong(timestamp);
+                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault());
+                String formattedTime = sdf.format(new java.util.Date(timeInMillis));
+                holder.messageTime.setText(formattedTime);
+                holder.messageTime.setVisibility(View.VISIBLE);
+            } catch (NumberFormatException e) {
+                Log.e(TAG, "Error parsing timestamp: " + e.getMessage());
+                holder.messageTime.setVisibility(View.GONE);
+            }
+        } else {
+            holder.messageTime.setVisibility(View.GONE);
+        }
+
         // Handle image messages
         if (message.isImageMessage() && message.getImageUrl() != null && !message.getImageUrl().isEmpty()) {
             holder.messageText.setVisibility(View.GONE);
@@ -73,15 +90,17 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         notifyDataSetChanged();
     }
 
-    static class MessageViewHolder extends RecyclerView.ViewHolder {
+    public class MessageViewHolder extends RecyclerView.ViewHolder {
         TextView messageText;
         ImageView messageImage;
+        TextView messageTime;
         View messageContainer;
 
         MessageViewHolder(View itemView) {
             super(itemView);
             messageText = itemView.findViewById(R.id.messageText);
             messageImage = itemView.findViewById(R.id.messageImage);
+            messageTime = itemView.findViewById(R.id.messageTime);
             messageContainer = itemView.findViewById(R.id.messageContainer);
         }
     }

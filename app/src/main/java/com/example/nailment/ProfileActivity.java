@@ -133,7 +133,7 @@ public class ProfileActivity extends AppCompatActivity {
         chatButton.setOnClickListener(v -> {
             // Create a chat ID using both user IDs to ensure uniqueness
             String currentUserId = mAuth.getCurrentUser().getUid();
-            String chatId = currentUserId + "_" + manicurist.getUid();
+            String chatId = getChatId(currentUserId, manicurist.getUid());
             
             // Open chat activity with this manicurist
             Intent intent = new Intent(ProfileActivity.this, ChatActivity.class);
@@ -210,7 +210,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         // Create a chat ID using both user IDs to ensure uniqueness
         String currentUserId = mAuth.getCurrentUser().getUid();
-        String chatId = currentUserId + "_" + manicurist.getUid();
+        String chatId = getChatId(currentUserId, manicurist.getUid());
         Log.d(TAG, "Creating chat with ID: " + chatId);
         
         // Navigate to chat activity with the booking message
@@ -220,5 +220,14 @@ public class ProfileActivity extends AppCompatActivity {
         intent.putExtra("chat_partner_id", manicurist.getUid());
         intent.putExtra("initial_message", message);
         startActivity(intent);
+    }
+
+    /**
+     * Generates a consistent chat ID for two users regardless of who initiates the chat
+     */
+    private String getChatId(String userId1, String userId2) {
+        return userId1.compareTo(userId2) < 0 ? 
+               userId1 + "_" + userId2 : 
+               userId2 + "_" + userId1;
     }
 }
