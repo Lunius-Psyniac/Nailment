@@ -23,6 +23,7 @@ public class AuthActivity extends AppCompatActivity {
     private RadioGroup userTypeGroup;
     private Button loginButton, registerButton;
     private boolean isLoginMode = true;
+    private FirebaseDatabase mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +31,7 @@ public class AuthActivity extends AppCompatActivity {
         setContentView(R.layout.activity_auth);
 
         mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance();
 
         // Initialize views
         emailInput = findViewById(R.id.emailInput);
@@ -98,16 +100,36 @@ public class AuthActivity extends AppCompatActivity {
 
     private void loginUser(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
-                        Log.d("AuthActivity", "Login successful");
-                        navigateToMain();
-                    } else {
-                        Log.e("AuthActivity", "Login failed: " + task.getException().getMessage());
-                        Toast.makeText(AuthActivity.this, 
-                            "Authentication failed: " + task.getException().getMessage(),
-                            Toast.LENGTH_SHORT).show();
-                    }
+                .addOnSuccessListener(authResult -> {
+                    // Check if account is active
+                    String userId = authResult.getUser().getUid();
+                    mDatabase.getReference("users").child(userId).get()
+                            .addOnSuccessListener(dataSnapshot -> {
+                                if (dataSnapshot.exists()) {
+                                    Boolean isActive = dataSnapshot.child("accountActive").getValue(Boolean.class);
+                                    if (isActive != null && !isActive) {
+                                        // Account is deactivated
+                                        mAuth.signOut();
+                                        Toast.makeText(AuthActivity.this, 
+                                            "This account has been deactivated", 
+                                            Toast.LENGTH_LONG).show();
+                                        return;
+                                    }
+                                }
+                                // Account is active, proceed with login
+                                Toast.makeText(AuthActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
+                                startActivity(new Intent(AuthActivity.this, MainActivity.class));
+                                finish();
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(AuthActivity.this, 
+                                    "Error checking account status: " + e.getMessage(), 
+                                    Toast.LENGTH_SHORT).show();
+                            });
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(AuthActivity.this, "Login failed: " + e.getMessage(), 
+                                 Toast.LENGTH_SHORT).show();
                 });
     }
 

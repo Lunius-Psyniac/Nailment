@@ -11,7 +11,8 @@ public class SettingOption {
         HELP,
         LOCATION_PERMISSION,
         CAMERA_PERMISSION,
-        GALLERY_PERMISSION
+        GALLERY_PERMISSION,
+        DEACTIVATE_ACCOUNT
     }
 
     public SettingOption(String title, Type type) {

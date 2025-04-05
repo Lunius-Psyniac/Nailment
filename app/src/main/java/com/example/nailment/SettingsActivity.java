@@ -18,6 +18,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.chip.Chip;
 import android.Manifest;
 import android.widget.Toast;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +33,16 @@ public class SettingsActivity extends AppCompatActivity implements SettingsAdapt
     
     private RecyclerView settingsRecyclerView;
     private List<SettingOption> settingsList;
+    private FirebaseAuth mAuth;
+    private DatabaseReference mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+
+        mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         // Back button to go to the previous activity
         ImageButton backButton = findViewById(R.id.backButton);
@@ -64,6 +72,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsAdapt
         list.add(new SettingOption("Camera Permission", SettingOption.Type.CAMERA_PERMISSION));
         list.add(new SettingOption("Gallery Permission", SettingOption.Type.GALLERY_PERMISSION));
         list.add(new SettingOption("Help", SettingOption.Type.HELP));
+        list.add(new SettingOption("Deactivate Account", SettingOption.Type.DEACTIVATE_ACCOUNT));
         return list;
     }
 
@@ -114,7 +123,43 @@ public class SettingsActivity extends AppCompatActivity implements SettingsAdapt
                     "Gallery access is needed to save nail designs", 
                     GALLERY_PERMISSION_REQUEST);
                 break;
+            case DEACTIVATE_ACCOUNT:
+                showDeactivateAccountDialog();
+                break;
         }
+    }
+
+    private void showDeactivateAccountDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Deactivate Account")
+               .setMessage("Are you sure you want to deactivate your account? This action cannot be undone.")
+               .setPositiveButton("Deactivate", (dialog, which) -> {
+                   deactivateAccount();
+               })
+               .setNegativeButton("Cancel", (dialog, which) -> {
+                   dialog.dismiss();
+               });
+        builder.create().show();
+    }
+
+    private void deactivateAccount() {
+        String userId = mAuth.getCurrentUser().getUid();
+        mDatabase.child("users").child(userId).child("accountActive").setValue(false)
+                .addOnSuccessListener(aVoid -> {
+                    // Sign out the user
+                    mAuth.signOut();
+                    // Show success message
+                    Toast.makeText(this, "Account deactivated successfully", Toast.LENGTH_SHORT).show();
+                    // Redirect to login screen
+                    Intent intent = new Intent(this, AuthActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Failed to deactivate account: " + e.getMessage(), 
+                                 Toast.LENGTH_SHORT).show();
+                });
     }
 
     private void showPermissionDialog(String permission, String message, int requestCode) {

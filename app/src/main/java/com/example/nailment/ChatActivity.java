@@ -199,39 +199,59 @@ public class ChatActivity extends AppCompatActivity {
             return;
         }
 
-        // Get current user's email as username
-        String userName = mAuth.getCurrentUser().getEmail();
-        if (userName == null) {
-            userName = "User";
-        }
+        sendMessage(messageText);
+    }
 
-        Log.d(TAG, "Sending message: '" + messageText + "' to chat: " + currentChatId);
-        Log.d(TAG, "Current user ID: " + mAuth.getCurrentUser().getUid());
-        Log.d(TAG, "Current user name: " + userName);
+    private void sendMessage(String messageText) {
+        if (messageText.trim().isEmpty()) return;
 
-        // Create message with correct constructor parameters
-        Message message = new Message(
-            messageText,
-            mAuth.getCurrentUser().getUid(),
-            userName
-        );
+        String currentUserId = mAuth.getCurrentUser().getUid();
+        String chatId = currentChatId;
 
-        Log.d(TAG, "Message object created. Text: " + message.getText() + 
-              ", User ID: " + message.getUserId() + 
-              ", User Name: " + message.getUserName());
+        // Check if recipient's account is active
+        String recipientId = chatId.replace(currentUserId, "").replace("_", "");
+        database.getReference("users").child(recipientId).child("accountActive").get()
+                .addOnSuccessListener(dataSnapshot -> {
+                    Boolean isActive = dataSnapshot.getValue(Boolean.class);
+                    // Only block if accountActive is explicitly false
+                    if (isActive != null && isActive == false) {
+                        Toast.makeText(ChatActivity.this, 
+                            "Cannot send message: Recipient's account is deactivated", 
+                            Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
-        messagesRef.push().setValue(message)
-            .addOnSuccessListener(aVoid -> {
-                messageInput.setText("");
-                Log.d(TAG, "Message sent successfully to path: " + messagesRef.toString());
-            })
-            .addOnFailureListener(e -> {
-                Log.e(TAG, "Error sending message: " + e.getMessage());
-                Log.e(TAG, "Error details: " + e.getCause());
-                Toast.makeText(ChatActivity.this, 
-                    "Error sending message: " + e.getMessage(),
-                    Toast.LENGTH_SHORT).show();
-            });
+                    // Get current user's email as username
+                    String userName = mAuth.getCurrentUser().getEmail();
+                    if (userName == null) {
+                        userName = "User";
+                    }
+
+                    // Recipient is active or accountActive is not set, proceed with sending message
+                    Message message = new Message(
+                        messageText,
+                        currentUserId,
+                        userName
+                    );
+
+                    messagesRef.push().setValue(message)
+                            .addOnSuccessListener(aVoid -> {
+                                Log.d(TAG, "Message sent successfully");
+                                messageInput.setText("");
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.e(TAG, "Failed to send message: " + e.getMessage());
+                                Toast.makeText(ChatActivity.this, 
+                                    "Failed to send message: " + e.getMessage(), 
+                                    Toast.LENGTH_SHORT).show();
+                            });
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Failed to check recipient status: " + e.getMessage());
+                    Toast.makeText(ChatActivity.this, 
+                        "Failed to send message: " + e.getMessage(), 
+                        Toast.LENGTH_SHORT).show();
+                });
     }
 
     private void checkChatAccessAndLoadMessages(String chatId) {
