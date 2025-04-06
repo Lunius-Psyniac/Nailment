@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,8 +55,11 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
         // Set click listener to open chat with this user
         holder.itemView.setOnClickListener(v -> {
-            // Create a chat ID using user's name
-            String chatId = user.getName().toLowerCase().replace(" ", "_");
+            // Get current user's ID
+            String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            
+            // Create a chat ID using both user IDs to ensure uniqueness and consistency
+            String chatId = getChatId(currentUserId, user.getUid());
             
             // Open chat activity with this user
             Intent intent = new Intent(context, ChatActivity.class);
@@ -64,6 +68,15 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             intent.putExtra("chat_partner_id", user.getUid());
             context.startActivity(intent);
         });
+    }
+
+    /**
+     * Generates a consistent chat ID for two users regardless of who initiates the chat
+     */
+    private String getChatId(String userId1, String userId2) {
+        return userId1.compareTo(userId2) < 0 ? 
+               userId1 + "_" + userId2 : 
+               userId2 + "_" + userId1;
     }
 
     @Override

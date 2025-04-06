@@ -11,14 +11,19 @@
         android:text="Write a Review"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:layout_marginBottom="16dp"/>
+        android:fontFamily="@font/anticdidone_regular"
+        android:layout_marginBottom="16dp"
+        android:textColor="?attr/colorOnSurface"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Your Rating"
         android:textSize="16sp"
-        android:layout_marginBottom="8dp"/>
+        android:textStyle="bold"
+        android:fontFamily="@font/anticdidone_regular"
+        android:layout_marginBottom="8dp"
+        android:textColor="?attr/colorOnSurface"/>
 
     <RatingBar
         android:id="@+id/review_rating_bar"
@@ -34,8 +39,11 @@
         android:layout_height="wrap_content"
         android:text="Your Comment"
         android:textSize="16sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/anticdidone_regular"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"/>
+        android:layout_marginBottom="8dp"
+        android:textColor="?attr/colorOnSurface"/>
 
     <EditText
         android:id="@+id/review_comment"
@@ -44,8 +52,10 @@
         android:minHeight="100dp"
         android:gravity="top"
         android:inputType="textMultiLine"
-        android:background="@drawable/message_input_background"
+        android:background="@drawable/message_input_background_selector"
         android:padding="12dp"
-        android:hint="Write your review here..."/>
+        android:hint="Write your review here..."
+        android:textColor="@color/text_primary_light"
+        android:textColorHint="@color/text_secondary_light"/>
 
 </LinearLayout> 

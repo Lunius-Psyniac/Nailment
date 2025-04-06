@@ -1,5 +1,6 @@
 package com.example.nailment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageButton;
@@ -7,6 +8,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -57,6 +59,35 @@ public class ReviewsActivity extends AppCompatActivity {
 
         // Load reviews
         loadReviews();
+        
+        // Bottom Navigation Bar
+        findViewById(R.id.homeButton).setOnClickListener(v -> startActivity(new Intent(this, MainActivity.class)));
+        findViewById(R.id.settingsButton).setOnClickListener(v -> startActivity(new Intent(this, SettingsActivity.class)));
+        
+        // Camera button to open CameraActivity
+        findViewById(R.id.cameraButton).setOnClickListener(v -> {
+            Intent intent = new Intent(ReviewsActivity.this, CameraActivity.class);
+            startActivity(intent);
+        });
+        
+        // Chat button to navigate to ChatActivity
+        findViewById(R.id.chatButton).setOnClickListener(v -> {
+            Intent intent = new Intent(ReviewsActivity.this, ChatActivity.class);
+            startActivity(intent);
+        });
+        
+        // Profile button to navigate to UserProfileActivity
+        findViewById(R.id.profileButton).setOnClickListener(v -> {
+            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                Intent intent = new Intent(ReviewsActivity.this, UserProfileActivity.class);
+                startActivity(intent);
+            } else {
+                Toast.makeText(ReviewsActivity.this, "You must be logged in to view your profile", Toast.LENGTH_SHORT).show();
+                // Optionally navigate to login screen
+                Intent intent = new Intent(ReviewsActivity.this, AuthActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void loadReviews() {

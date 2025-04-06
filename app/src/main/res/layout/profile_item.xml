@@ -28,7 +28,8 @@
             android:text="Name"
             android:textStyle="bold"
             android:textSize="25dp"
-            android:fontFamily="@font/anticdidone_regular" />
+            android:fontFamily="@font/anticdidone_regular"
+            android:textColor="?attr/colorOnSurface" />
 
         <TextView
             android:id="@+id/servicesText"
@@ -37,7 +38,8 @@
             android:text="Services"
             android:textStyle="bold"
             android:textSize="20dp"
-            android:fontFamily="@font/anticdidone_regular" />
+            android:fontFamily="@font/anticdidone_regular"
+            android:textColor="?attr/colorOnSurface" />
 
         <TextView
             android:id="@+id/locationText"
@@ -46,6 +48,7 @@
             android:text="Location"
             android:textStyle="bold"
             android:textSize="20dp"
-            android:fontFamily="@font/anticdidone_regular" />
+            android:fontFamily="@font/anticdidone_regular"
+            android:textColor="?attr/colorOnSurface" />
     </LinearLayout>
 </LinearLayout>

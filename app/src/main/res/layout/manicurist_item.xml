@@ -26,26 +26,37 @@
         android:layout_height="wrap_content"
         android:layout_weight="1">
 
-        <!-- Manicurist Name -->
-        <TextView
-            android:id="@+id/manicuristName"
-            android:layout_width="wrap_content"
+        <!-- Manicurist Name and Location Container -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Name"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:fontFamily="@font/anticdidone_regular"/>
+            android:orientation="horizontal">
 
-        <!-- Manicurist Location -->
-        <TextView
-            android:id="@+id/manicuristLocation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Location"
-            android:textSize="14sp"
-            android:textColor="#666666"
-            android:layout_marginTop="2dp"
-            android:fontFamily="@font/anticdidone_regular"/>
+            <!-- Manicurist Name -->
+            <TextView
+                android:id="@+id/manicuristName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Name"
+                android:textStyle="bold"
+                android:textSize="22sp"
+                android:textColor="?attr/colorOnSurface"
+                android:fontFamily="@font/anticdidone_regular"/>
+
+            <!-- Manicurist Location -->
+            <TextView
+                android:id="@+id/manicuristLocation"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Location"
+                android:textSize="16sp"
+                android:textColor="?attr/colorOnSurface"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:layout_marginStart="8dp"
+                android:fontFamily="@font/anticdidone_regular"/>
+        </LinearLayout>
 
         <!-- Rating Bar -->
         <RatingBar
@@ -55,20 +66,24 @@
             android:isIndicator="true"
             android:numStars="5"
             android:stepSize="0.5"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="6dp"
             android:progressTint="#FFD700"
             android:progressBackgroundTint="#CCCCCC"/>
 
         <!-- Manicurist Description -->
         <TextView
             android:id="@+id/manicuristDescription"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Description"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:maxLines="2"
+            android:minLines="2"
+            android:lineSpacingExtra="4dp"
+            android:textStyle="bold"
+            android:textColor="?attr/colorOnSurface"
             android:ellipsize="end"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="6dp"
             android:fontFamily="@font/anticdidone_regular"/>
     </LinearLayout>
 

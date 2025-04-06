@@ -19,6 +19,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.DatabaseReference;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -133,7 +134,7 @@ public class ProfileActivity extends AppCompatActivity {
         chatButton.setOnClickListener(v -> {
             // Create a chat ID using both user IDs to ensure uniqueness
             String currentUserId = mAuth.getCurrentUser().getUid();
-            String chatId = currentUserId + "_" + manicurist.getUid();
+            String chatId = getChatId(currentUserId, manicurist.getUid());
             
             // Open chat activity with this manicurist
             Intent intent = new Intent(ProfileActivity.this, ChatActivity.class);
@@ -149,6 +150,32 @@ public class ProfileActivity extends AppCompatActivity {
         // Bottom Navigation Bar
         findViewById(R.id.homeButton).setOnClickListener(v -> startActivity(new Intent(this, MainActivity.class)));
         findViewById(R.id.settingsButton).setOnClickListener(v -> startActivity(new Intent(this, SettingsActivity.class)));
+        
+        // Camera button to open CameraActivity
+        findViewById(R.id.cameraButton).setOnClickListener(v -> {
+            Intent intent = new Intent(ProfileActivity.this, CameraActivity.class);
+            startActivity(intent);
+        });
+        
+        // Chat button to navigate to ChatActivity
+        findViewById(R.id.chatButton).setOnClickListener(v -> {
+            Intent intent = new Intent(ProfileActivity.this, ChatActivity.class);
+            startActivity(intent);
+        });
+        
+        // Profile button to navigate to UserProfileActivity
+        findViewById(R.id.profileButton).setOnClickListener(v -> {
+            FirebaseAuth mAuth = FirebaseAuth.getInstance();
+            if (mAuth.getCurrentUser() != null) {
+                Intent intent = new Intent(ProfileActivity.this, UserProfileActivity.class);
+                startActivity(intent);
+            } else {
+                Toast.makeText(ProfileActivity.this, "You must be logged in to view your profile", Toast.LENGTH_SHORT).show();
+                // Optionally navigate to login screen
+                Intent intent = new Intent(ProfileActivity.this, AuthActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void showDateTimePicker() {
@@ -210,9 +237,66 @@ public class ProfileActivity extends AppCompatActivity {
 
         // Create a chat ID using both user IDs to ensure uniqueness
         String currentUserId = mAuth.getCurrentUser().getUid();
-        String chatId = currentUserId + "_" + manicurist.getUid();
+        String chatId = getChatId(currentUserId, manicurist.getUid());
         Log.d(TAG, "Creating chat with ID: " + chatId);
         
+        // First check if the chat exists and create it if it doesn't
+        database.getReference("chats").child(chatId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    // Chat exists, proceed to open chat activity
+                    openChatActivity(chatId, message);
+                } else {
+                    // Chat doesn't exist, create it first
+                    Log.d(TAG, "Chat doesn't exist, creating it first");
+                    createChatStructure(chatId, message);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e(TAG, "Error checking chat existence: " + databaseError.getMessage());
+                Toast.makeText(ProfileActivity.this, 
+                    "Error creating chat: " + databaseError.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void createChatStructure(String chatId, String message) {
+        String currentUserId = mAuth.getCurrentUser().getUid();
+        
+        // Create chat metadata
+        ChatMetadata metadata = new ChatMetadata(currentUserId, manicurist.getUid());
+        
+        // Create the chat structure with metadata and messages node
+        DatabaseReference chatRef = database.getReference("chats").child(chatId);
+        chatRef.child("metadata").setValue(metadata)
+            .addOnSuccessListener(aVoid -> {
+                // Initialize empty messages node
+                chatRef.child("messages").setValue(null)
+                    .addOnSuccessListener(messagesVoid -> {
+                        Log.d(TAG, "Chat structure created successfully");
+                        // Now open the chat activity with the initial message
+                        openChatActivity(chatId, message);
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e(TAG, "Failed to create messages node: " + e.getMessage());
+                        Toast.makeText(ProfileActivity.this, 
+                            "Error creating chat: " + e.getMessage(),
+                            Toast.LENGTH_SHORT).show();
+                    });
+            })
+            .addOnFailureListener(e -> {
+                Log.e(TAG, "Failed to create chat structure: " + e.getMessage());
+                Toast.makeText(ProfileActivity.this, 
+                    "Error creating chat: " + e.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+            });
+    }
+
+    private void openChatActivity(String chatId, String message) {
         // Navigate to chat activity with the booking message
         Intent intent = new Intent(ProfileActivity.this, ChatActivity.class);
         intent.putExtra("chat_partner_name", manicurist.getName());
@@ -220,5 +304,14 @@ public class ProfileActivity extends AppCompatActivity {
         intent.putExtra("chat_partner_id", manicurist.getUid());
         intent.putExtra("initial_message", message);
         startActivity(intent);
+    }
+
+    /**
+     * Generates a consistent chat ID for two users regardless of who initiates the chat
+     */
+    private String getChatId(String userId1, String userId2) {
+        return userId1.compareTo(userId2) < 0 ? 
+               userId1 + "_" + userId2 : 
+               userId2 + "_" + userId1;
     }
 }

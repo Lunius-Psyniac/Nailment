@@ -1,8 +1,8 @@
 <!-- res/drawable/button_background.xml -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#FFFFFF" /> <!-- White background -->
+    <solid android:color="?attr/colorSurface" />
     <stroke
         android:width="2dp"
-        android:color="#000000" />
+        android:color="?attr/colorPrimary" />
     <corners android:radius="0dp" />   <!-- No rounded corners -->
 </shape>

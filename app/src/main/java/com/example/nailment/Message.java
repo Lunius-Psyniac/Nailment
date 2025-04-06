@@ -1,28 +1,47 @@
 package com.example.nailment;
 
 public class Message {
-    private String id;
+    public static final String TYPE_TEXT = "text";
+    public static final String TYPE_IMAGE = "image";
+    
+    public static final String STATUS_SENT = "sent";
+    public static final String STATUS_DELIVERED = "delivered";
+    public static final String STATUS_READ = "read";
+
     private String text;
-    private String userId;
-    private String userName;
-    private long timestamp;
+    private String senderId;
+    private String receiverId;
+    private String timestamp;
+    private String type;
+    private String imageUrl;
+    private String status;
+    private boolean imageMessage;
 
-    // Required empty constructor for Firebase
-    public Message() {}
+    // Empty constructor required for Firebase
+    public Message() {
+        this.status = STATUS_SENT;
+    }
 
-    public Message(String text, String userId, String userName) {
+    // Constructor for text messages
+    public Message(String text, String senderId, String receiverId) {
         this.text = text;
-        this.userId = userId;
-        this.userName = userName;
-        this.timestamp = System.currentTimeMillis();
+        this.senderId = senderId;
+        this.receiverId = receiverId;
+        this.timestamp = String.valueOf(System.currentTimeMillis());
+        this.type = TYPE_TEXT;
+        this.status = STATUS_SENT;
+        this.imageMessage = false;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+    // Constructor for image messages
+    public Message(String imageUrl, String senderId, String receiverId, boolean isImageMessage) {
+        this.text = imageUrl;
+        this.senderId = senderId;
+        this.receiverId = receiverId;
+        this.timestamp = String.valueOf(System.currentTimeMillis());
+        this.type = TYPE_IMAGE;
+        this.status = STATUS_SENT;
+        this.imageMessage = isImageMessage;
     }
 
     public String getText() {
@@ -33,27 +52,59 @@ public class Message {
         this.text = text;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getSenderId() {
+        return senderId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setSenderId(String senderId) {
+        this.senderId = senderId;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getReceiverId() {
+        return receiverId;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setReceiverId(String receiverId) {
+        this.receiverId = receiverId;
     }
 
-    public long getTimestamp() {
+    public String getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(long timestamp) {
+    public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public boolean isImageMessage() {
+        return imageMessage;
+    }
+
+    public void setImageMessage(boolean imageMessage) {
+        this.imageMessage = imageMessage;
     }
 } 

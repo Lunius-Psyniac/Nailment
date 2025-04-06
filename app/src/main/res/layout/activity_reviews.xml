@@ -7,16 +7,13 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:background="@color/white">
+        android:padding="20dp"
+        android:background="@drawable/button_background"
+        android:layout_margin="16dp">
 
-        <ImageButton
-            android:id="@+id/backButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/ic_back"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Back button" />
+        <!-- Include the back button -->
+        <include
+            layout="@layout/back_button" />
 
         <TextView
             android:id="@+id/titleText"
@@ -24,8 +21,10 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="Reviews"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textSize="35sp"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="bold"
+            android:fontFamily="@font/anticdidone_regular" />
 
     </RelativeLayout>
 
@@ -34,7 +33,11 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:padding="8dp"
+        android:padding="16dp"
         android:clipToPadding="false" />
+        
+    <!-- Include the bottom navigation bar -->
+    <include
+        layout="@layout/bottom_navbar" />
 
 </LinearLayout> 

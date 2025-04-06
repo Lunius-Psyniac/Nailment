@@ -74,14 +74,39 @@ public class SettingsActivity extends AppCompatActivity implements SettingsAdapt
         settingsRecyclerView.setAdapter(adapter);
         Log.d("SettingsActivity", "Adapter set with " + settingsList.size() + " items");
 
+        // Bottom Navigation Bar
         findViewById(R.id.homeButton).setOnClickListener(v -> startActivity(new Intent(this, MainActivity.class)));
         findViewById(R.id.settingsButton).setOnClickListener(v -> startActivity(new Intent(this, SettingsActivity.class)));
+        
+        // Camera button to open CameraActivity
+        findViewById(R.id.cameraButton).setOnClickListener(v -> {
+            Intent intent = new Intent(SettingsActivity.this, CameraActivity.class);
+            startActivity(intent);
+        });
+        
+        // Chat button to navigate to ChatActivity
+        findViewById(R.id.chatButton).setOnClickListener(v -> {
+            Intent intent = new Intent(SettingsActivity.this, ChatActivity.class);
+            startActivity(intent);
+        });
+        
+        // Profile button to navigate to UserProfileActivity
+        findViewById(R.id.profileButton).setOnClickListener(v -> {
+            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                Intent intent = new Intent(SettingsActivity.this, UserProfileActivity.class);
+                startActivity(intent);
+            } else {
+                Toast.makeText(SettingsActivity.this, "You must be logged in to view your profile", Toast.LENGTH_SHORT).show();
+                // Optionally navigate to login screen
+                Intent intent = new Intent(SettingsActivity.this, AuthActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private List<SettingOption> createSettingsList() {
         List<SettingOption> list = new ArrayList<>();
         list.add(new SettingOption("Privacy Policy", SettingOption.Type.PRIVACY_POLICY));
-        list.add(new SettingOption("Notifications", SettingOption.Type.NOTIFICATIONS));
         list.add(new SettingOption("Dark Mode", SettingOption.Type.APPEARANCE));
         list.add(new SettingOption("Location Permission", SettingOption.Type.LOCATION_PERMISSION));
         list.add(new SettingOption("Camera Permission", SettingOption.Type.CAMERA_PERMISSION));
@@ -99,27 +124,25 @@ public class SettingsActivity extends AppCompatActivity implements SettingsAdapt
     }
 
     @Override
-    public boolean isNotificationsEnabled() {
-        return getSharedPreferences("app_settings", MODE_PRIVATE)
-                .getBoolean("notifications_enabled", true);
-    }
-
-    @Override
-    public void toggleNotifications(boolean enable) {
-        getSharedPreferences("app_settings", MODE_PRIVATE)
-                .edit()
-                .putBoolean("notifications_enabled", enable)
-                .apply();
-    }
-
-    @Override
     public boolean isDarkModeEnabled() {
-        return (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+        try {
+            return NailmentApplication.isDarkMode();
+        } catch (Exception e) {
+            // If there's an error, default to light mode
+            return false;
+        }
     }
 
     @Override
     public void toggleDarkMode(boolean enable) {
-        AppCompatDelegate.setDefaultNightMode(enable ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
+        try {
+            NailmentApplication.setDarkMode(enable);
+        } catch (Exception e) {
+            // If there's an error, just apply the theme directly
+            AppCompatDelegate.setDefaultNightMode(
+                enable ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO
+            );
+        }
     }
 
     public void handleSettingClick(SettingOption setting) {
@@ -189,13 +212,20 @@ public class SettingsActivity extends AppCompatActivity implements SettingsAdapt
         String userId = mAuth.getCurrentUser().getUid();
         mDatabase.child("users").child(userId).child("accountActive").setValue(false)
                 .addOnSuccessListener(aVoid -> {
-                    // Sign out the user
+                    // Sign out the user first
                     mAuth.signOut();
+                    
                     // Show success message
                     Toast.makeText(this, "Account deactivated successfully", Toast.LENGTH_SHORT).show();
-                    // Redirect to login screen
+                    
+                    // Create intent for navigation
                     Intent intent = new Intent(this, AuthActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    
+                    // Set a flag to indicate we need to reset the theme
+                    intent.putExtra("reset_theme", true);
+                    
+                    // Start the activity and finish this one
                     startActivity(intent);
                     finish();
                 })
@@ -265,10 +295,20 @@ public class SettingsActivity extends AppCompatActivity implements SettingsAdapt
             .setTitle("Log out")
             .setMessage("Are you sure you want to log out?")
             .setPositiveButton("Log out", (dialog, which) -> {
+                // Sign out the user first
                 mAuth.signOut();
+                
+                // Show success message
                 Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
+                
+                // Create intent for navigation
                 Intent intent = new Intent(this, AuthActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                
+                // Set a flag to indicate we need to reset the theme
+                intent.putExtra("reset_theme", true);
+                
+                // Start the activity and finish this one
                 startActivity(intent);
                 finish();
             })

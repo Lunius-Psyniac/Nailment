@@ -2,7 +2,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_background"
     android:gravity="center_horizontal"
     android:orientation="vertical">
 
@@ -19,16 +18,31 @@
         android:textSize="30sp"
         android:textStyle="bold" />
 
-    <TextView
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/anticdidone_regular"
-        android:text="Nail Salons near you"
+        android:orientation="horizontal"
         android:layout_gravity="left"
-        android:textStyle="bold"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:textSize="25dp" />
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/anticdidone_regular"
+            android:text="Nail Salons near you"
+            android:textStyle="bold"
+            android:textSize="25dp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/navigateToMapButton"
+            android:layout_width="50sp"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:backgroundTint="@null"
+            android:text="🗺️"
+            android:textSize="30sp" />
+    </LinearLayout>
 
     <HorizontalScrollView
         android:layout_width="match_parent"
@@ -40,50 +54,149 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <!-- Placeholder for clickable images -->
-            <ImageView
-                android:id="@+id/logo1"
-                android:layout_width="180dp"
-                android:layout_height="180dp"
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:layout_marginEnd="10dp"
-                android:layout_marginStart="15dp"
-                android:padding="2dp"
-                android:src="@drawable/nailment_salon1"
-                android:background="@drawable/button_background"
-                android:contentDescription="Nail Salon Logo 1" />
+                android:layout_marginStart="15dp">
 
-            <ImageView
-                android:id="@+id/logo2"
-                android:layout_width="180dp"
-                android:layout_height="180dp"
+                <FrameLayout
+                    android:layout_width="180dp"
+                    android:layout_height="180dp"
+                    android:background="@drawable/button_background"
+                    android:padding="2dp">
+
+                    <ImageView
+                        android:id="@+id/logo1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/nailment_salon1"
+                        android:contentDescription="Nail Salon Logo 1" />
+
+                    <TextView
+                        android:id="@+id/salonName1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:gravity="center"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/anticdidone_regular"
+                        android:background="#80000000"
+                        android:padding="8dp"
+                        android:textColor="#FFFFFF" />
+                </FrameLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:layout_marginEnd="10dp"
-                android:layout_marginStart="10dp"
-                android:padding="2dp"
-                android:src="@drawable/nailment_salon2"
-                android:background="@drawable/button_background"
-                android:contentDescription="Nail Salon Logo 2" />
+                android:layout_marginStart="10dp">
 
-            <ImageView
-                android:id="@+id/logo3"
-                android:layout_width="180dp"
-                android:layout_height="180dp"
+                <FrameLayout
+                    android:layout_width="180dp"
+                    android:layout_height="180dp"
+                    android:background="@drawable/button_background"
+                    android:padding="2dp">
+
+                    <ImageView
+                        android:id="@+id/logo2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/nailment_salon2"
+                        android:contentDescription="Nail Salon Logo 2" />
+
+                    <TextView
+                        android:id="@+id/salonName2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:gravity="center"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/anticdidone_regular"
+                        android:background="#80000000"
+                        android:padding="8dp"
+                        android:textColor="#FFFFFF" />
+                </FrameLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:layout_marginEnd="10dp"
-                android:layout_marginStart="10dp"
-                android:padding="2dp"
-                android:src="@drawable/nailment_salon3"
-                android:background="@drawable/button_background"
-                android:contentDescription="Nail Salon Logo 3" />
+                android:layout_marginStart="10dp">
 
-            <ImageView
-                android:id="@+id/logo4"
-                android:layout_width="180dp"
-                android:layout_height="180dp"
+                <FrameLayout
+                    android:layout_width="180dp"
+                    android:layout_height="180dp"
+                    android:background="@drawable/button_background"
+                    android:padding="2dp">
+
+                    <ImageView
+                        android:id="@+id/logo3"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/nailment_salon3"
+                        android:contentDescription="Nail Salon Logo 3" />
+
+                    <TextView
+                        android:id="@+id/salonName3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:gravity="center"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/anticdidone_regular"
+                        android:background="#80000000"
+                        android:padding="8dp"
+                        android:textColor="#FFFFFF" />
+                </FrameLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:layout_marginEnd="15dp"
-                android:layout_marginStart="10dp"
-                android:padding="2dp"
-                android:src="@drawable/nailment_salon4"
-                android:background="@drawable/button_background"
-                android:contentDescription="Nail Salon Logo 4" />
+                android:layout_marginStart="10dp">
+
+                <FrameLayout
+                    android:layout_width="180dp"
+                    android:layout_height="180dp"
+                    android:background="@drawable/button_background"
+                    android:padding="2dp">
+
+                    <ImageView
+                        android:id="@+id/logo4"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/nailment_salon4"
+                        android:contentDescription="Nail Salon Logo 4" />
+
+                    <TextView
+                        android:id="@+id/salonName4"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:gravity="center"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/anticdidone_regular"
+                        android:background="#80000000"
+                        android:padding="8dp"
+                        android:textColor="#FFFFFF" />
+                </FrameLayout>
+            </LinearLayout>
         </LinearLayout>
     </HorizontalScrollView>
 
@@ -109,50 +222,93 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <!-- Placeholder for best designs images -->
-            <ImageView
-                android:id="@+id/design1"
-                android:layout_width="180dp"
-                android:layout_height="180dp"
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:layout_marginEnd="10dp"
-                android:layout_marginStart="15dp"
-                android:padding="2dp"
-                android:src="@drawable/nailment_nails1"
-                android:background="@drawable/button_background"
-                android:contentDescription="Best Design 1" />
+                android:layout_marginStart="15dp">
+                <FrameLayout
+                    android:layout_width="180dp"
+                    android:layout_height="180dp"
+                    android:background="@drawable/button_background"
+                    android:padding="2dp">
+                    <ImageView
+                        android:id="@+id/design1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/nailment_nails1"
+                        android:background="@drawable/button_background"
+                        android:contentDescription="Best Design 1" />
+                </FrameLayout>
+            </LinearLayout>
 
-            <ImageView
-                android:id="@+id/design2"
-                android:layout_width="180dp"
-                android:layout_height="180dp"
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:layout_marginEnd="10dp"
-                android:layout_marginStart="10dp"
-                android:padding="2dp"
-                android:src="@drawable/nailment_nails2"
-                android:background="@drawable/button_background"
-                android:contentDescription="Best Design 2" />
+                android:layout_marginStart="15dp">
+                <FrameLayout
+                    android:layout_width="180dp"
+                    android:layout_height="180dp"
+                    android:background="@drawable/button_background"
+                    android:padding="2dp">
+                    <ImageView
+                        android:id="@+id/design2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/nailment_nails2"
+                        android:background="@drawable/button_background"
+                        android:contentDescription="Best Design 2" />
+                </FrameLayout>
+            </LinearLayout>
 
-            <ImageView
-                android:id="@+id/design3"
-                android:layout_width="180dp"
-                android:layout_height="180dp"
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:layout_marginEnd="10dp"
-                android:layout_marginStart="10dp"
-                android:padding="2dp"
-                android:src="@drawable/nailment_nails3"
-                android:background="@drawable/button_background"
-                android:contentDescription="Best Design 3" />
+                android:layout_marginStart="15dp">
+                <FrameLayout
+                    android:layout_width="180dp"
+                    android:layout_height="180dp"
+                    android:background="@drawable/button_background"
+                    android:padding="2dp">
+                    <ImageView
+                        android:id="@+id/design3"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/nailment_nails3"
+                        android:background="@drawable/button_background"
+                        android:contentDescription="Best Design 3" />
+                </FrameLayout>
+            </LinearLayout>
 
-            <ImageView
-                android:id="@+id/design4"
-                android:layout_width="180dp"
-                android:layout_height="180dp"
-                android:layout_marginEnd="15dp"
-                android:layout_marginStart="10dp"
-                android:padding="2dp"
-                android:src="@drawable/nailment_nails4"
-                android:background="@drawable/button_background"
-                android:contentDescription="Best Design 4" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="15dp">
+                <FrameLayout
+                    android:layout_width="180dp"
+                    android:layout_height="180dp"
+                    android:background="@drawable/button_background"
+                    android:padding="2dp">
+                    <ImageView
+                        android:id="@+id/design4"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/nailment_nails4"
+                        android:background="@drawable/button_background"
+                        android:contentDescription="Best Design 4" />
+                </FrameLayout>
+            </LinearLayout>
         </LinearLayout>
     </HorizontalScrollView>
 
@@ -181,168 +337,9 @@
         android:layout_height="130dp"
         android:layout_weight="1" />
 
-    <!-- Bottom Navigation Bar -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="111dp"
-        android:background="@drawable/border"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:weightSum="5">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center">
-
-            <ImageView
-                android:id="@+id/home_icon"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:contentDescription="Home icon"
-                android:src="@drawable/nailment_home" />
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/homeButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#FFFFFF"
-                android:fontFamily="@font/anticdidone_regular"
-                android:text="Home"
-                android:textStyle="bold"
-                android:textAllCaps="false"
-                android:textSize="20sp"
-                android:singleLine="true"
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center">
-
-            <ImageView
-                android:id="@+id/camera_icon"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:contentDescription="Camera icon"
-                android:src="@drawable/nailment_camera" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/cameraButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#FFFFFF"
-                android:fontFamily="@font/anticdidone_regular"
-                android:text="AR Nails"
-                android:textStyle="bold"
-                android:textAllCaps="false"
-                android:textSize="20sp"
-                android:singleLine="true"
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center">
-
-            <ImageView
-                android:id="@+id/chat_icon"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:contentDescription="Chat icon"
-                android:src="@drawable/nailment_chat" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/chatButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#FFFFFF"
-                android:fontFamily="@font/anticdidone_regular"
-                android:text="Chat"
-                android:textStyle="bold"
-                android:textAllCaps="false"
-                android:textSize="20sp"
-                android:singleLine="true"
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center">
-
-            <ImageView
-                android:id="@+id/profile_icon"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:contentDescription="Profile icon"
-                android:src="@drawable/nailment_camera" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/profileButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#FFFFFF"
-                android:fontFamily="@font/anticdidone_regular"
-                android:text="Profile"
-                android:textStyle="bold"
-                android:textAllCaps="false"
-                android:textSize="20sp"
-                android:singleLine="true"
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center">
-
-            <ImageView
-                android:id="@+id/settings_icon"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:contentDescription="Settings icon"
-                android:src="@drawable/nailment_settings" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/settingsButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#FFFFFF"
-                android:fontFamily="@font/anticdidone_regular"
-                android:text="Settings"
-                android:textStyle="bold"
-                android:textAllCaps="false"
-                android:textSize="20sp"
-                android:singleLine="true"
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"/>
-        </LinearLayout>
-    </LinearLayout>
+    <!-- Include the bottom navigation bar -->
+    <include
+        android:id="@+id/bottom_navbar"
+        layout="@layout/bottom_navbar" />
 
 </LinearLayout>

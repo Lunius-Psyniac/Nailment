@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Bottom Navigation Bar -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="111dp"
+    android:background="?attr/colorSurface"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:elevation="4dp">
+
+    <!-- Top border -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/black" />
+
+    <!-- Icons container -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:weightSum="5"
+        android:gravity="center">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/home_icon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:contentDescription="Home icon"
+                android:src="@drawable/nailment_home"
+                style="@style/NavIcon" />
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/homeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@null"
+                android:fontFamily="@font/anticdidone_regular"
+                android:text="Home"
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                android:textSize="17sp"
+                android:textColor="?attr/colorOnSurface"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/camera_icon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:contentDescription="Camera icon"
+                android:src="@drawable/nailment_camera"
+                style="@style/NavIcon" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/cameraButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@null"
+                android:fontFamily="@font/anticdidone_regular"
+                android:text="Camera"
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                android:textSize="17sp"
+                android:textColor="?attr/colorOnSurface"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/chat_icon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:contentDescription="Chat icon"
+                android:src="@drawable/nailment_chat"
+                style="@style/NavIcon" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/chatButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@null"
+                android:fontFamily="@font/anticdidone_regular"
+                android:text="Chat"
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                android:textSize="17sp"
+                android:textColor="?attr/colorOnSurface"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/profile_icon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:contentDescription="Profile icon"
+                android:src="@drawable/nailment_profile"
+                style="@style/NavIcon" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/profileButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@null"
+                android:fontFamily="@font/anticdidone_regular"
+                android:text="Profile"
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                android:textSize="17sp"
+                android:textColor="?attr/colorOnSurface"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/settings_icon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:contentDescription="Settings icon"
+                android:src="@drawable/nailment_settings"
+                style="@style/NavIcon" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/settingsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@null"
+                android:fontFamily="@font/anticdidone_regular"
+                android:text="Settings"
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                android:textSize="17sp"
+                android:textColor="?attr/colorOnSurface"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"/>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout> 

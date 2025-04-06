@@ -16,8 +16,6 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
     private final OnSettingChangeListener listener;
 
     public interface OnSettingChangeListener {
-        boolean isNotificationsEnabled();
-        void toggleNotifications(boolean enable);
         boolean isDarkModeEnabled();
         void toggleDarkMode(boolean enable);
     }
@@ -42,24 +40,17 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
         holder.titleTextView.setText(setting.getTitle());
 
         // Show/hide switch based on setting type
-        if (setting.getType() == SettingOption.Type.NOTIFICATIONS ||
-            setting.getType() == SettingOption.Type.APPEARANCE) {
+        if (setting.getType() == SettingOption.Type.APPEARANCE) {
             holder.switchView.setVisibility(View.VISIBLE);
             Log.d("SettingsAdapter", "Showing switch for: " + setting.getTitle());
             
             // Set initial switch state
-            boolean isEnabled = setting.getType() == SettingOption.Type.NOTIFICATIONS ?
-                    listener.isNotificationsEnabled() :
-                    listener.isDarkModeEnabled();
+            boolean isEnabled = listener.isDarkModeEnabled();
             holder.switchView.setChecked(isEnabled);
 
             // Set switch listener
             holder.switchView.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                if (setting.getType() == SettingOption.Type.NOTIFICATIONS) {
-                    listener.toggleNotifications(isChecked);
-                } else if (setting.getType() == SettingOption.Type.APPEARANCE) {
-                    listener.toggleDarkMode(isChecked);
-                }
+                listener.toggleDarkMode(isChecked);
             });
         } else {
             holder.switchView.setVisibility(View.GONE);
@@ -69,8 +60,7 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.Settin
         // Set click listener for the entire item
         holder.itemView.setOnClickListener(v -> {
             Log.d("SettingsAdapter", "Item clicked: " + setting.getTitle());
-            if (setting.getType() != SettingOption.Type.NOTIFICATIONS &&
-                setting.getType() != SettingOption.Type.APPEARANCE) {
+            if (setting.getType() != SettingOption.Type.APPEARANCE) {
                 ((SettingsActivity) holder.itemView.getContext()).handleSettingClick(setting);
             }
         });
