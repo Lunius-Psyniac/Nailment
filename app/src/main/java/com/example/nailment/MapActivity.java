@@ -183,13 +183,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                         == PackageManager.PERMISSION_GRANTED) {
 
+            // Enable the "My Location" feature which shows the blue dot
+            mMap.setMyLocationEnabled(true);
+
             fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
                     .addOnSuccessListener(this, location -> {
                         if (location != null) {
                             LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                            mMap.addMarker(new MarkerOptions()
-                                    .position(userLocation)
-                                    .title("Your Location"));
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 15));
                             // Automatically search for salons when location is obtained
                             searchNearbySalons(userLocation);
@@ -236,7 +236,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 runOnUiThread(() -> {
                     mMap.clear(); // Clear old markers
-                    mMap.addMarker(new MarkerOptions().position(userLocation).title("Your Location"));
+                    // Remove the custom marker for user location since we're using the blue dot
+                    // mMap.addMarker(new MarkerOptions().position(userLocation).title("Your Location"));
 
                     for (int i = 0; i < results.length(); i++) {
                         try {
