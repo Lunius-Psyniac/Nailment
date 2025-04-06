@@ -30,17 +30,22 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:minHeight="48dp">
 
             <!-- Manicurist Name -->
             <TextView
                 android:id="@+id/manicuristName"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="Name"
                 android:textStyle="bold"
                 android:textSize="22sp"
                 android:textColor="?attr/colorOnSurface"
+                android:layout_marginEnd="16dp"
+                android:maxLines="2"
+                android:ellipsize="end"
                 android:fontFamily="@font/anticdidone_regular"/>
 
             <!-- Manicurist Location -->
@@ -55,6 +60,8 @@
                 android:textStyle="bold"
                 android:gravity="end"
                 android:layout_marginStart="8dp"
+                android:maxLines="2"
+                android:ellipsize="end"
                 android:fontFamily="@font/anticdidone_regular"/>
         </LinearLayout>
 
