@@ -83,7 +83,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                         // Update rating count
                         int ratingCount = updatedManicurist.getRatingCount();
-                        String ratingText = String.format("(%d %s)", ratingCount, ratingCount == 1 ? "review" : "reviews");
+                        String ratingText = String.format("%d\n%s", ratingCount, ratingCount == 1 ? "review" : "reviews");
                         ratingCountTextView.setText(ratingText);
                         Log.d(TAG, "Rating count updated for " + updatedManicurist.getName() + ": " + ratingText);
                     }
