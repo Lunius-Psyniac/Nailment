@@ -107,7 +107,6 @@ public class SettingsActivity extends AppCompatActivity implements SettingsAdapt
     private List<SettingOption> createSettingsList() {
         List<SettingOption> list = new ArrayList<>();
         list.add(new SettingOption("Privacy Policy", SettingOption.Type.PRIVACY_POLICY));
-        list.add(new SettingOption("Notifications", SettingOption.Type.NOTIFICATIONS));
         list.add(new SettingOption("Dark Mode", SettingOption.Type.APPEARANCE));
         list.add(new SettingOption("Location Permission", SettingOption.Type.LOCATION_PERMISSION));
         list.add(new SettingOption("Camera Permission", SettingOption.Type.CAMERA_PERMISSION));
@@ -122,20 +121,6 @@ public class SettingsActivity extends AppCompatActivity implements SettingsAdapt
         }
         
         return list;
-    }
-
-    @Override
-    public boolean isNotificationsEnabled() {
-        return getSharedPreferences("app_settings", MODE_PRIVATE)
-                .getBoolean("notifications_enabled", true);
-    }
-
-    @Override
-    public void toggleNotifications(boolean enable) {
-        getSharedPreferences("app_settings", MODE_PRIVATE)
-                .edit()
-                .putBoolean("notifications_enabled", enable)
-                .apply();
     }
 
     @Override

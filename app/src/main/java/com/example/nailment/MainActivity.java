@@ -43,7 +43,7 @@ import com.google.firebase.auth.FirebaseAuth;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private FusedLocationProviderClient fusedLocationClient;
-    private static final int SEARCH_RADIUS = 5000; // 5km radius
+    private static final int SEARCH_RADIUS = 2000; // 5km radius
     private List<ImageView> salonImageViews;
     private List<TextView> salonNameViews;
     private List<String> salonPhotoUrls;

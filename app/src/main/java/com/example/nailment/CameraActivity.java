@@ -29,7 +29,6 @@ import java.util.Locale;
 public class CameraActivity extends AppCompatActivity {
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
-    private static final int REQUEST_PICK_IMAGE = 2;
     private static final int REQUEST_PERMISSIONS = 200;
     private String currentPhotoPath;
 
@@ -47,13 +46,6 @@ public class CameraActivity extends AppCompatActivity {
                 if (checkAndRequestPermissions()) {
                     openCamera();
                 }
-            }
-        });
-
-        findViewById(R.id.galleryButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openGallery();
             }
         });
     }
@@ -120,11 +112,6 @@ public class CameraActivity extends AppCompatActivity {
         return image;
     }
 
-    private void openGallery() {
-        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(galleryIntent, REQUEST_PICK_IMAGE);
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -135,8 +122,6 @@ public class CameraActivity extends AppCompatActivity {
             if (requestCode == REQUEST_IMAGE_CAPTURE) {
                 File file = new File(currentPhotoPath);
                 imageUri = Uri.fromFile(file);
-            } else if (requestCode == REQUEST_PICK_IMAGE && data != null) {
-                imageUri = data.getData();
             }
 
             if (imageUri != null) {
