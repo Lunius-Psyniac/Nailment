@@ -9,6 +9,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,6 +24,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     private List<Message> messages = new ArrayList<>();
     private String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
     private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+    private String currentUserName;
+    private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private DatabaseReference usersRef = database.getReference("users");
 
     @NonNull
     @Override
@@ -31,9 +39,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
         Message message = messages.get(position);
-        
-        // Set sender name
-        holder.userNameText.setText(message.getSenderId().equals(currentUserId) ? "You" : "Other");
         
         // Format timestamp
         long timestamp = Long.parseLong(message.getTimestamp());
@@ -66,10 +71,36 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         
         if (message.getSenderId().equals(currentUserId)) {
             marginParams.setMargins(100, 0, 0, 0);
-            holder.userNameText.setVisibility(View.GONE);
+            // Show current user's name above their messages
+            holder.userNameText.setText("You");
+            holder.userNameText.setVisibility(View.VISIBLE);
         } else {
             marginParams.setMargins(0, 0, 100, 0);
+            // Get the other user's name from the database
+            holder.userNameText.setText("Loading...");
             holder.userNameText.setVisibility(View.VISIBLE);
+            
+            // Fetch the user's name from the database
+            usersRef.child(message.getSenderId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        User user = dataSnapshot.getValue(User.class);
+                        if (user != null) {
+                            holder.userNameText.setText(user.getName());
+                        } else {
+                            holder.userNameText.setText("User");
+                        }
+                    } else {
+                        holder.userNameText.setText("User");
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    holder.userNameText.setText("User");
+                }
+            });
         }
         
         messageContainer.setLayoutParams(marginParams);
