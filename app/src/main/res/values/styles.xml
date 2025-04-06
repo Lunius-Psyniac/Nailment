@@ -10,4 +10,9 @@
         <item name="android:minHeight">64dp</item>
         <item name="android:maxHeight">64dp</item>
     </style>
+    
+    <!-- Base NavIcon style for light mode -->
+    <style name="NavIcon">
+        <!-- No tint in light mode to keep original colors -->
+    </style>
 </resources> 
