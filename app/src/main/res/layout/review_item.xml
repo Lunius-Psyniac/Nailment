@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="12dp"
-    app:cardCornerRadius="12dp"
     app:cardElevation="4dp"
     app:cardBackgroundColor="@android:color/transparent">
 
@@ -30,7 +29,7 @@
                 android:layout_weight="1"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:textColor="#333333"
+                android:textColor="?attr/colorOnSurface"
                 android:fontFamily="@font/anticdidone_regular"/>
 
             <TextView
@@ -38,7 +37,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
-                android:textColor="#666666"
+                android:textColor="?attr/colorOnSurface"
                 android:fontFamily="@font/anticdidone_regular"
                 android:textStyle="bold"/>
         </LinearLayout>
@@ -60,7 +59,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:textColor="#333333"
+            android:textColor="?attr/colorOnSurface"
             android:fontFamily="@font/anticdidone_regular"
             android:textStyle="bold"/>
 

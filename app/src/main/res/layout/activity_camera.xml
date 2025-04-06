@@ -38,7 +38,7 @@
         android:padding="16dp"
         android:text="Take Photo"
         android:textAllCaps="false"
-        android:textColor="#333333"
+        android:textColor="?attr/colorOnSurface"
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"

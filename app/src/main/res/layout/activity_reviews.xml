@@ -22,7 +22,7 @@
             android:layout_centerInParent="true"
             android:text="Reviews"
             android:textSize="35sp"
-            android:textColor="#333333"
+            android:textColor="?attr/colorOnSurface"
             android:textStyle="bold"
             android:fontFamily="@font/anticdidone_regular" />
 

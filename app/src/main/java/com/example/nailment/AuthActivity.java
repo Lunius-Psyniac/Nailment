@@ -51,6 +51,11 @@ public class AuthActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Check if we need to reset the theme
+        if (getIntent().getBooleanExtra("reset_theme", false)) {
+            NailmentApplication.setDarkMode(false);
+        }
+        
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
 

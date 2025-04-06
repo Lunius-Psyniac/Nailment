@@ -25,7 +25,7 @@
             android:layout_weight="1"
             android:text="Chat"
             android:textSize="35sp"
-            android:textColor="#333333"
+            android:textColor="?attr/colorOnSurface"
             android:textStyle="bold"
             android:fontFamily="@font/anticdidone_regular"
             android:layout_gravity="center_vertical"
@@ -35,15 +35,17 @@
             android:id="@+id/reviewButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Submit review"
-            android:textSize="10sp"
+            android:text="Review"
+            android:textSize="20sp"
             android:textStyle="bold"
             android:fontFamily="@font/anticdidone_regular"
             android:background="@drawable/button_background"
             android:backgroundTint="@null"
             android:padding="12dp"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="8dp"/>
+            android:layout_marginStart="8dp"
+            android:textColor="?attr/colorOnSurface"
+            android:textAllCaps="false"/>
 
     </LinearLayout>
 
@@ -99,7 +101,8 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Attach Image"
                 android:src="@drawable/ic_attach"
-                android:layout_marginEnd="8dp"/>
+                android:layout_marginEnd="8dp"
+                style="@style/AttachImageButton"/>
 
             <EditText
                 android:id="@+id/messageInput"
@@ -111,9 +114,12 @@
                 android:maxLines="4"
                 android:padding="16dp"
                 android:textSize="18sp"
+                android:textStyle="bold"
                 android:fontFamily="@font/anticdidone_regular"
                 android:background="@drawable/button_background"
-                android:layout_marginEnd="16dp"/>
+                android:layout_marginEnd="16dp"
+                android:textColor="?attr/colorOnSurface"
+                android:textColorHint="?attr/colorOnSurface"/>
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/sendButton"
@@ -125,7 +131,9 @@
                 android:fontFamily="@font/anticdidone_regular"
                 android:background="@drawable/button_background"
                 android:backgroundTint="@null"
-                android:padding="16dp"/>
+                android:padding="16dp"
+                android:textColor="?attr/colorOnSurface"
+                android:textAllCaps="false"/>
         </LinearLayout>
     </LinearLayout>
     

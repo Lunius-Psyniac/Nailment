@@ -106,7 +106,9 @@
             android:textStyle="bold"
             android:fontFamily="@font/anticdidone_regular"
             android:textSize="22sp"
-            android:padding="12dp"/>
+            android:padding="12dp"
+            android:textColor="?attr/colorOnSurface"
+            android:textAllCaps="false"/>
 
         <ImageView
             android:id="@+id/profilePicturePreview"
@@ -168,7 +170,9 @@
             android:textStyle="bold"
             android:fontFamily="@font/anticdidone_regular"
             android:textSize="24sp"
-            android:padding="12dp"/>
+            android:padding="12dp"
+            android:textColor="?attr/colorOnSurface"
+            android:textAllCaps="false"/>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/registerButton"
@@ -180,7 +184,9 @@
             android:textStyle="bold"
             android:fontFamily="@font/anticdidone_regular"
             android:textSize="22sp"
-            android:padding="12dp"/>
+            android:padding="12dp"
+            android:textColor="?attr/colorOnSurface"
+            android:textAllCaps="false"/>
 
     </LinearLayout>
 </ScrollView>

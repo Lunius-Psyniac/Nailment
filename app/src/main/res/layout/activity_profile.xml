@@ -28,16 +28,16 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@drawable/button_background"
-        android:padding="20dp"
-        android:layout_margin="16dp">
+        android:padding="18dp"
+        android:layout_margin="14dp">
 
         <!-- Profile Image -->
         <ImageView
             android:id="@+id/profile_image"
-            android:layout_width="140dp"
-            android:layout_height="140dp"
+            android:layout_width="130dp"
+            android:layout_height="130dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="18dp"
             android:scaleType="centerCrop"
             android:src="@drawable/placeholder_image"
             android:contentDescription="Profile Image" />
@@ -48,15 +48,15 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center"
-            android:layout_marginBottom="20dp">
+            android:layout_marginBottom="18dp">
 
             <TextView
                 android:id="@+id/profile_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="35sp"
-                android:textColor="#333333"
+                android:textSize="32sp"
+                android:textColor="?attr/colorOnSurface"
                 android:textStyle="bold"
                 android:fontFamily="@font/anticdidone_regular"
                 android:gravity="center"/>
@@ -65,8 +65,8 @@
                 android:id="@+id/profile_location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="22sp"
-                android:textColor="#333333"
+                android:textSize="21sp"
+                android:textColor="?attr/colorOnSurface"
                 android:textStyle="bold"
                 android:fontFamily="@font/anticdidone_regular"
                 android:layout_marginStart="12dp"/>
@@ -78,7 +78,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center"
-            android:layout_marginBottom="20dp">
+            android:layout_marginBottom="18dp">
 
             <RatingBar
                 android:id="@+id/profile_rating"
@@ -96,8 +96,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:textSize="20sp"
-                android:textColor="#333333"
+                android:textSize="17sp"
+                android:textColor="?attr/colorOnSurface"
                 android:textStyle="bold"
                 android:fontFamily="@font/anticdidone_regular" />
         </LinearLayout>
@@ -106,58 +106,61 @@
             android:id="@+id/profile_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:textColor="#333333"
+            android:textSize="19sp"
+            android:textColor="?attr/colorOnSurface"
             android:textStyle="bold"
             android:fontFamily="@font/anticdidone_regular"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="18dp"
             android:gravity="center"/>
 
         <!-- Read Reviews Button -->
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/read_reviews_button"
             android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:layout_marginBottom="12dp"
+            android:layout_height="65dp"
+            android:layout_marginBottom="10dp"
             android:background="@drawable/button_background"
             android:backgroundTint="@null"
             android:baselineAligned="false"
             android:textStyle="bold"
             android:fontFamily="@font/anticdidone_regular"
-            android:textSize="22sp"
+            android:textSize="21sp"
             android:textAllCaps="false"
-            android:padding="12dp"
+            android:padding="10dp"
+            android:textColor="?attr/colorOnSurface"
             android:text="Read Reviews"/>
 
         <!-- Book Button -->
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/book_button"
             android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:layout_marginBottom="12dp"
+            android:layout_height="65dp"
+            android:layout_marginBottom="10dp"
             android:background="@drawable/button_background"
             android:backgroundTint="@null"
             android:baselineAligned="false"
             android:textStyle="bold"
             android:fontFamily="@font/anticdidone_regular"
-            android:textSize="22sp"
+            android:textSize="21sp"
             android:textAllCaps="false"
-            android:padding="12dp"
+            android:padding="10dp"
+            android:textColor="?attr/colorOnSurface"
             android:text="Book Appointment"/>
 
         <!-- Chat Button -->
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/chat_button"
             android:layout_width="match_parent"
-            android:layout_height="70dp"
+            android:layout_height="65dp"
             android:background="@drawable/button_background"
             android:backgroundTint="@null"
             android:baselineAligned="false"
             android:textStyle="bold"
             android:fontFamily="@font/anticdidone_regular"
-            android:textSize="22sp"
+            android:textSize="21sp"
             android:textAllCaps="false"
-            android:padding="12dp"/>
+            android:padding="10dp"
+            android:textColor="?attr/colorOnSurface"/>
     </LinearLayout>
 
     <View

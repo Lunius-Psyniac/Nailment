@@ -3,4 +3,16 @@
     <style name="NavIcon">
         <item name="android:tint">@color/white</item>
     </style>
+    
+    <style name="NavbarBorder">
+        <item name="android:background">@color/border_dark</item>
+    </style>
+
+    <style name="SortButton">
+        <item name="android:tint">@color/white</item>
+    </style>
+
+    <style name="AttachImageButton">
+        <item name="android:tint">@color/white</item>
+    </style>
 </resources> 

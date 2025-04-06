@@ -37,15 +37,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_weight="1"
-                android:textColor="@android:color/white"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="18sp" />
 
             <Button
                 android:id="@+id/reviewButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Review"
-                android:textColor="@android:color/white" />
+                android:text="review"
+                android:textColor="?attr/colorOnSurface"
+                android:textAllCaps="false"/>
 
         </LinearLayout>
 
@@ -76,7 +77,8 @@
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Attach Image"
-            android:src="@drawable/ic_attach" />
+            android:src="@drawable/ic_attach"
+            style="@style/AttachImageButton"/>
 
         <EditText
             android:id="@+id/messageInput"
@@ -90,13 +92,17 @@
             android:imeOptions="actionSend"
             android:inputType="textMultiLine"
             android:maxLines="4"
-            android:padding="8dp" />
+            android:padding="8dp"
+            android:textColor="?attr/colorOnSurface"
+            android:textColorHint="?attr/colorOnSurface" />
 
         <Button
             android:id="@+id/sendButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Send" />
+            android:text="Sender"
+            android:textColor="?attr/colorOnSurface"
+            android:textAllCaps="false" />
 
     </LinearLayout>
     

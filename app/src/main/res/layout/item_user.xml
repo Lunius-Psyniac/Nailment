@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="#333333"
+            android:textColor="?attr/colorOnSurface"
             android:fontFamily="@font/anticdidone_regular"/>
 
         <TextView
@@ -36,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16sp"
-            android:textColor="#666666"
+            android:textColor="?attr/colorOnSurface"
             android:fontFamily="@font/anticdidone_regular"
             android:textStyle="bold"/>
     </LinearLayout>

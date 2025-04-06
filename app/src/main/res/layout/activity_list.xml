@@ -30,7 +30,7 @@
         android:layout_marginBottom="32dp"
         android:fontFamily="@font/anticdidone_regular"
         android:text="Manicurists"
-        android:textColor="#333333"
+        android:textColor="?attr/colorOnSurface"
         android:textSize="45sp"
         android:textStyle="bold" />
 
@@ -53,8 +53,10 @@
             android:padding="16dp"
             android:background="@drawable/button_background"
             android:fontFamily="@font/anticdidone_regular"
-            android:textSize="16sp"
+            android:textSize="20sp"
             android:textStyle="bold"
+            android:textColorHint="?attr/colorOnSurface"
+            android:textColor="?attr/colorOnSurface"
             android:layout_marginEnd="16dp"/>
 
         <!-- Sort Button -->
@@ -66,7 +68,8 @@
             android:src="@drawable/ic_sort"
             android:contentDescription="Sort by rating"
             android:padding="12dp"
-            android:scaleType="fitCenter"/>
+            android:scaleType="fitCenter"
+            style="@style/SortButton"/>
     </LinearLayout>
 
     <!-- RecyclerView for Manicurist List -->

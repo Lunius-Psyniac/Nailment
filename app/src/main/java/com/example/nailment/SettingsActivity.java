@@ -125,12 +125,24 @@ public class SettingsActivity extends AppCompatActivity implements SettingsAdapt
 
     @Override
     public boolean isDarkModeEnabled() {
-        return (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+        try {
+            return NailmentApplication.isDarkMode();
+        } catch (Exception e) {
+            // If there's an error, default to light mode
+            return false;
+        }
     }
 
     @Override
     public void toggleDarkMode(boolean enable) {
-        AppCompatDelegate.setDefaultNightMode(enable ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
+        try {
+            NailmentApplication.setDarkMode(enable);
+        } catch (Exception e) {
+            // If there's an error, just apply the theme directly
+            AppCompatDelegate.setDefaultNightMode(
+                enable ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO
+            );
+        }
     }
 
     public void handleSettingClick(SettingOption setting) {
@@ -200,13 +212,20 @@ public class SettingsActivity extends AppCompatActivity implements SettingsAdapt
         String userId = mAuth.getCurrentUser().getUid();
         mDatabase.child("users").child(userId).child("accountActive").setValue(false)
                 .addOnSuccessListener(aVoid -> {
-                    // Sign out the user
+                    // Sign out the user first
                     mAuth.signOut();
+                    
                     // Show success message
                     Toast.makeText(this, "Account deactivated successfully", Toast.LENGTH_SHORT).show();
-                    // Redirect to login screen
+                    
+                    // Create intent for navigation
                     Intent intent = new Intent(this, AuthActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    
+                    // Set a flag to indicate we need to reset the theme
+                    intent.putExtra("reset_theme", true);
+                    
+                    // Start the activity and finish this one
                     startActivity(intent);
                     finish();
                 })
@@ -276,10 +295,20 @@ public class SettingsActivity extends AppCompatActivity implements SettingsAdapt
             .setTitle("Log out")
             .setMessage("Are you sure you want to log out?")
             .setPositiveButton("Log out", (dialog, which) -> {
+                // Sign out the user first
                 mAuth.signOut();
+                
+                // Show success message
                 Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
+                
+                // Create intent for navigation
                 Intent intent = new Intent(this, AuthActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                
+                // Set a flag to indicate we need to reset the theme
+                intent.putExtra("reset_theme", true);
+                
+                // Start the activity and finish this one
                 startActivity(intent);
                 finish();
             })

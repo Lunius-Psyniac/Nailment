@@ -5,6 +5,9 @@
         <item name="android:windowBackground">@drawable/gradient_background_dark</item>
         <item name="android:textColorPrimary">@color/white</item>
         <item name="android:textColorSecondary">@color/white</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textColorHint">@color/white</item>
+        <item name="android:textColorTertiary">@color/white</item>
         <item name="colorSurface">@color/surface_dark</item>
         <item name="android:colorBackground">@color/background_dark</item>
         <item name="colorPrimary">@color/white</item>

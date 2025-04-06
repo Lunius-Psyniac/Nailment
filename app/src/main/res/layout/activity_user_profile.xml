@@ -52,7 +52,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="16dp"
             android:textSize="35sp"
-            android:textColor="#333333"
+            android:textColor="?attr/colorOnSurface"
             android:textStyle="bold"
             android:fontFamily="@font/anticdidone_regular" />
 
@@ -63,7 +63,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="16dp"
             android:textSize="20sp"
-            android:textColor="#333333"
+            android:textColor="?attr/colorOnSurface"
             android:textStyle="bold"
             android:fontFamily="@font/anticdidone_regular" />
 
@@ -74,7 +74,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="24dp"
             android:textSize="20sp"
-            android:textColor="#333333"
+            android:textColor="?attr/colorOnSurface"
             android:textStyle="bold"
             android:fontFamily="@font/anticdidone_regular" />
 
@@ -84,7 +84,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textSize="18sp"
-            android:textColor="#333333"
+            android:textColor="?attr/colorOnSurface"
             android:textStyle="bold"
             android:fontFamily="@font/anticdidone_regular" />
     </LinearLayout>

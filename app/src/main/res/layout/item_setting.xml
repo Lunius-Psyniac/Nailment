@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:textSize="20sp"
-        android:textColor="#333333"
+        android:textColor="?attr/colorOnSurface"
         android:textStyle="bold"
         android:fontFamily="@font/anticdidone_regular"/>
 
