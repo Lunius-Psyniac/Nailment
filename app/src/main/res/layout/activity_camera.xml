@@ -2,7 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background">
 
     <!-- Back Button -->
     <androidx.appcompat.widget.Toolbar
@@ -27,26 +28,38 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/cameraButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_width="320dp"
+        android:layout_height="79dp"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/button_background"
+        android:backgroundTint="@null"
+        android:fontFamily="@font/anticdidone_regular"
         android:padding="16dp"
         android:text="Take Photo"
-        android:textSize="18sp"
+        android:textAllCaps="false"
+        android:textColor="#333333"
+        android:textSize="30sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/galleryButton"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/galleryButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_width="320dp"
+        android:layout_height="79dp"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/button_background"
+        android:backgroundTint="@null"
+        android:fontFamily="@font/anticdidone_regular"
         android:padding="16dp"
         android:text="Choose from Gallery"
-        android:textSize="18sp"
+        android:textAllCaps="false"
+        android:textColor="#333333"
+        android:textSize="30sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />

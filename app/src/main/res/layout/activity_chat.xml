@@ -3,15 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@drawable/gradient_background">
 
     <!-- Top Bar with Back Button and Title -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="#F5F5F5"
-        android:padding="8dp">
+        android:background="@drawable/button_background"
+        android:padding="20dp"
+        android:layout_margin="16dp">
 
         <!-- Include the back button -->
         <include
@@ -23,8 +25,10 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Chat"
-            android:textSize="20sp"
+            android:textSize="35sp"
+            android:textColor="#333333"
             android:textStyle="bold"
+            android:fontFamily="@font/anticdidone_regular"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="16dp"/>
 
@@ -37,21 +41,15 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Users"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:padding="16dp"
-            android:background="#F5F5F5"/>
+        android:visibility="gone"
+        android:layout_marginHorizontal="16dp">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/usersRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:padding="16dp"
+            android:clipToPadding="false"/>
     </LinearLayout>
 
     <!-- Chat Container -->
@@ -61,7 +59,8 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="gone"
+        android:layout_marginHorizontal="16dp">
 
         <!-- Messages RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
@@ -69,15 +68,16 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:padding="8dp"/>
+            android:padding="16dp"
+            android:clipToPadding="false"/>
 
         <!-- Message Input Area -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="8dp"
-            android:background="#F5F5F5">
+            android:padding="16dp"
+            android:background="@drawable/button_background">
 
             <EditText
                 android:id="@+id/messageInput"
@@ -87,15 +87,23 @@
                 android:hint="Type a message..."
                 android:inputType="textMultiLine"
                 android:maxLines="4"
-                android:padding="12dp"
-                android:background="@android:color/white"/>
+                android:padding="16dp"
+                android:textSize="18sp"
+                android:fontFamily="@font/anticdidone_regular"
+                android:background="@drawable/button_background"
+                android:layout_marginEnd="16dp"/>
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/sendButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Send"
-                android:layout_marginStart="8dp"/>
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/anticdidone_regular"
+                android:background="@drawable/button_background"
+                android:backgroundTint="@null"
+                android:padding="16dp"/>
         </LinearLayout>
     </LinearLayout>
     

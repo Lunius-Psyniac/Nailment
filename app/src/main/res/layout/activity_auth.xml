@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -10,6 +11,18 @@
         android:padding="16dp"
         android:gravity="center">
 
+        <!-- App title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="32dp"
+            android:fontFamily="@font/anticdidone_regular"
+            android:text="Nailment"
+            android:textColor="#333333"
+            android:textSize="55sp"
+            android:textStyle="bold" />
+
         <!-- Login/Register Toggle -->
         <RadioGroup
             android:id="@+id/userTypeGroup"
@@ -17,7 +30,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="24dp"
             android:visibility="gone">
 
             <RadioButton
@@ -25,13 +38,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="User"
-                android:layout_marginEnd="16dp"/>
+                android:layout_marginEnd="16dp"
+                android:fontFamily="@font/anticdidone_regular"
+                android:textSize="22sp"
+                android:textStyle="bold"/>
 
             <RadioButton
                 android:id="@+id/manicuristTypeRadio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Manicurist"/>
+                android:text="Manicurist"
+                android:fontFamily="@font/anticdidone_regular"
+                android:textSize="22sp"
+                android:textStyle="bold"/>
         </RadioGroup>
 
         <!-- Common fields for both modes -->
@@ -41,7 +60,12 @@
             android:layout_height="wrap_content"
             android:hint="Email"
             android:inputType="textEmailAddress"
-            android:layout_marginBottom="8dp"/>
+            android:layout_marginBottom="16dp"
+            android:padding="12dp"
+            android:background="@drawable/button_background"
+            android:fontFamily="@font/anticdidone_regular"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
 
         <EditText
             android:id="@+id/passwordInput"
@@ -49,7 +73,12 @@
             android:layout_height="wrap_content"
             android:hint="Password"
             android:inputType="textPassword"
-            android:layout_marginBottom="8dp"/>
+            android:layout_marginBottom="16dp"
+            android:padding="12dp"
+            android:background="@drawable/button_background"
+            android:fontFamily="@font/anticdidone_regular"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
 
         <!-- Registration fields (hidden in login mode) -->
         <EditText
@@ -58,22 +87,36 @@
             android:layout_height="wrap_content"
             android:hint="Name"
             android:inputType="textPersonName"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="16dp"
+            android:padding="12dp"
+            android:background="@drawable/button_background"
+            android:fontFamily="@font/anticdidone_regular"
+            android:textSize="20sp"
+            android:textStyle="bold"
             android:visibility="gone"/>
-        <Button
+
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/uploadPictureButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Upload Profile Picture"
-            android:layout_marginBottom="8dp"/>
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/button_background"
+            android:backgroundTint="@null"
+            android:textStyle="bold"
+            android:fontFamily="@font/anticdidone_regular"
+            android:textSize="22sp"
+            android:padding="12dp"/>
 
         <ImageView
             android:id="@+id/profilePicturePreview"
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:layout_gravity="center"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="16dp"
             android:scaleType="centerCrop"
+            android:background="@drawable/button_background"
+            android:padding="2dp"
             android:visibility="gone"/>
 
         <!-- Common fields for both types -->
@@ -84,7 +127,12 @@
             android:hint="Self Description"
             android:inputType="textMultiLine"
             android:minLines="3"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="16dp"
+            android:padding="12dp"
+            android:background="@drawable/button_background"
+            android:fontFamily="@font/anticdidone_regular"
+            android:textSize="20sp"
+            android:textStyle="bold"
             android:visibility="gone"/>
 
         <!-- Manicurist specific fields -->
@@ -101,22 +149,38 @@
                 android:layout_height="wrap_content"
                 android:hint="Location"
                 android:inputType="text"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="16dp"
+                android:padding="12dp"
+                android:background="@drawable/button_background"
+                android:fontFamily="@font/anticdidone_regular"
+                android:textSize="20sp"
+                android:textStyle="bold"/>
         </LinearLayout>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/loginButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Login"
-            android:layout_marginBottom="8dp"/>
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/button_background"
+            android:backgroundTint="@null"
+            android:textStyle="bold"
+            android:fontFamily="@font/anticdidone_regular"
+            android:textSize="24sp"
+            android:padding="12dp"/>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/registerButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Need an account? Register"
-            style="@style/Widget.MaterialComponents.Button.TextButton"/>
+            android:background="@drawable/button_background"
+            android:backgroundTint="@null"
+            android:textStyle="bold"
+            android:fontFamily="@font/anticdidone_regular"
+            android:textSize="22sp"
+            android:padding="12dp"/>
 
     </LinearLayout>
 </ScrollView>
