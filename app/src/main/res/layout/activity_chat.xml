@@ -32,6 +32,20 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="16dp"/>
 
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/reviewButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Submit review"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/anticdidone_regular"
+            android:background="@drawable/button_background"
+            android:backgroundTint="@null"
+            android:padding="12dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="8dp"/>
+
     </LinearLayout>
 
     <!-- User List Container -->
@@ -78,6 +92,15 @@
             android:orientation="horizontal"
             android:padding="16dp"
             android:background="@drawable/button_background">
+
+            <ImageButton
+                android:id="@+id/attachImageButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Attach Image"
+                android:src="@drawable/ic_attach"
+                android:layout_marginEnd="8dp"/>
 
             <EditText
                 android:id="@+id/messageInput"

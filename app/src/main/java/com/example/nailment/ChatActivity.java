@@ -1,6 +1,7 @@
 package com.example.nailment;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -10,6 +11,9 @@ import android.widget.ImageButton;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,8 +25,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class ChatActivity extends AppCompatActivity {
     private static final String TAG = "ChatActivity";
@@ -43,6 +51,20 @@ public class ChatActivity extends AppCompatActivity {
     private Button reviewButton;
     private String chatPartnerId;
     private String currentUserName;
+    private Uri selectedImageUri;
+    private FirebaseStorage storage;
+    private StorageReference storageRef;
+    private ImageButton attachImageButton;
+    
+    private final ActivityResultLauncher<String> imagePickerLauncher = registerForActivityResult(
+            new ActivityResultContracts.GetContent(),
+            uri -> {
+                if (uri != null) {
+                    selectedImageUri = uri;
+                    uploadImageToFirebaseStorage();
+                }
+            }
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +75,8 @@ public class ChatActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
         currentUserName = mAuth.getCurrentUser().getEmail();
+        storage = FirebaseStorage.getInstance();
+        storageRef = storage.getReference();
 
         // Check if user is authenticated
         if (mAuth.getCurrentUser() == null) {
@@ -81,6 +105,11 @@ public class ChatActivity extends AppCompatActivity {
             chatTitle.setText(chatPartnerName);
         }
 
+        // Set up review button - initially hide it
+        Button reviewButton = findViewById(R.id.reviewButton);
+        reviewButton.setVisibility(View.GONE);
+        reviewButton.setOnClickListener(v -> showReviewDialog());
+
         // Initialize views
         userListContainer = findViewById(R.id.userListContainer);
         chatContainer = findViewById(R.id.chatContainer);
@@ -101,11 +130,20 @@ public class ChatActivity extends AppCompatActivity {
         messageInput = findViewById(R.id.messageInput);
         Button sendButton = findViewById(R.id.sendButton);
         sendButton.setOnClickListener(v -> sendMessage());
+        
+        // Initialize image attachment button
+        attachImageButton = findViewById(R.id.attachImageButton);
+        attachImageButton.setOnClickListener(v -> {
+            imagePickerLauncher.launch("image/*");
+        });
 
         // If we have a chat ID, show chat view
         if (currentChatId != null) {
             showChatView();
             checkChatAccessAndLoadMessages(currentChatId);
+            
+            // Show review button only in individual chat view
+            reviewButton.setVisibility(View.VISIBLE);
             
             // If we have an initial message, send it
             if (initialMessage != null && !initialMessage.isEmpty()) {
@@ -289,154 +327,25 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void sendMessage(String messageText) {
-        if (messageText.trim().isEmpty()) return;
-
-        String currentUserId = mAuth.getCurrentUser().getUid();
-        String chatId = currentChatId;
-        
-        // Add very visible error logs
-        Log.e(TAG, "ERROR CHECK - Current user ID: " + currentUserId);
-        Log.e(TAG, "ERROR CHECK - Chat ID: " + chatId);
-        Log.e(TAG, "ERROR CHECK - Chat ID length: " + (chatId != null ? chatId.length() : "null"));
-        Log.e(TAG, "ERROR CHECK - Current user ID length: " + (currentUserId != null ? currentUserId.length() : "null"));
-        
-        if (chatId != null && currentUserId != null) {
-            Log.e(TAG, "ERROR CHECK - Chat ID contains current user ID: " + chatId.contains(currentUserId));
-            Log.e(TAG, "ERROR CHECK - Chat ID contains underscore: " + chatId.contains("_"));
-            if (chatId.contains("_")) {
-                String[] parts = chatId.split("_");
-                Log.e(TAG, "ERROR CHECK - Number of parts after split: " + parts.length);
-                for (int i = 0; i < parts.length; i++) {
-                    Log.e(TAG, "ERROR CHECK - Part " + i + ": " + parts[i]);
-                }
-            }
+        if (currentChatId == null || mAuth.getCurrentUser() == null) {
+            Log.e(TAG, "Cannot send message: " + 
+                  (currentChatId == null ? "Chat ID is null" : "") +
+                  (mAuth.getCurrentUser() == null ? "User is not authenticated" : ""));
+            return;
         }
 
-        // First verify the current user exists in the database
-        database.getReference("users").child(currentUserId).get()
-            .addOnSuccessListener(currentUserSnapshot -> {
-                if (!currentUserSnapshot.exists()) {
-                    Log.e(TAG, "ERROR CHECK - Current user does not exist in database: " + currentUserId);
-                    Toast.makeText(ChatActivity.this, 
-                        "Error: User account not found", 
-                        Toast.LENGTH_SHORT).show();
-                    return;
-                }
+        // Get the recipient ID
+        String recipientId = getRecipientId(currentChatId);
+        if (recipientId == null) {
+            Log.e(TAG, "Could not determine recipient ID");
+            return;
+        }
 
-                // Extract the other user's ID from the chat ID
-                final String otherUserId;
-                
-                // Check if chatId contains the current user ID
-                if (chatId != null && currentUserId != null) {
-                    // Try different formats of chat ID
-                    if (chatId.contains(currentUserId)) {
-                        // Remove the current user ID and any underscores to get the other user's ID
-                        otherUserId = chatId.replace(currentUserId, "").replace("_", "");
-                        Log.e(TAG, "ERROR CHECK - Extracted recipient ID using replace: " + otherUserId);
-                    } else if (chatId.contains("_")) {
-                        // Try to extract from format like "user1_user2"
-                        String[] parts = chatId.split("_");
-                        if (parts.length == 2) {
-                            otherUserId = parts[0].equals(currentUserId) ? parts[1] : parts[0];
-                            Log.e(TAG, "ERROR CHECK - Extracted recipient ID from underscore format: " + otherUserId);
-                        } else {
-                            Log.e(TAG, "ERROR CHECK - Invalid chat ID format (multiple underscores): " + chatId);
-                            Toast.makeText(ChatActivity.this, 
-                                "Error: Invalid chat format", 
-                                Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                    } else {
-                        Log.e(TAG, "ERROR CHECK - Chat ID does not contain current user ID or underscore: " + chatId);
-                        Toast.makeText(ChatActivity.this, 
-                            "Error: Invalid chat format", 
-                            Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                } else {
-                    Log.e(TAG, "ERROR CHECK - Chat ID or current user ID is null");
-                    Toast.makeText(ChatActivity.this, 
-                        "Error: Invalid chat data", 
-                        Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                
-                if (otherUserId == null || otherUserId.isEmpty()) {
-                    Log.e(TAG, "ERROR CHECK - Failed to extract recipient ID");
-                    Toast.makeText(ChatActivity.this, 
-                        "Error: Could not identify recipient", 
-                        Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                
-                Log.e(TAG, "ERROR CHECK - Final extracted recipient ID: " + otherUserId);
-                
-                // Verify the other user exists in the database
-                database.getReference("users").child(otherUserId).get()
-                    .addOnSuccessListener(dataSnapshot -> {
-                        if (!dataSnapshot.exists()) {
-                            Log.e(TAG, "ERROR CHECK - Recipient user does not exist: " + otherUserId);
-                            Toast.makeText(ChatActivity.this, 
-                                "Cannot send message: Recipient not found", 
-                                Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-
-                        // Check if recipient's account is active
-                        Boolean isActive = dataSnapshot.child("accountActive").getValue(Boolean.class);
-                        if (isActive != null && isActive == false) {
-                            Toast.makeText(ChatActivity.this, 
-                                "Cannot send message: Recipient's account is deactivated", 
-                                Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-
-                        // Get the actual user ID from the database
-                        String recipientId = dataSnapshot.getKey();
-                        Log.e(TAG, "ERROR CHECK - Verified recipient ID from database: " + recipientId);
-
-                        // Create message with sender and receiver IDs
-                        Message message = new Message(
-                            messageText,
-                            currentUserId,
-                            recipientId
-                        );
-
-                        // Save message and update metadata
-                        DatabaseReference chatRef = database.getReference("chats").child(chatId);
-                        DatabaseReference messagesRef = chatRef.child("messages");
-                        DatabaseReference metadataRef = chatRef.child("metadata");
-
-                        messagesRef.push().setValue(message)
-                                .addOnSuccessListener(aVoid -> {
-                                    Log.e(TAG, "ERROR CHECK - Message sent successfully");
-                                    messageInput.setText("");
-                                    
-                                    // Update chat metadata
-                                    ChatMetadata metadata = new ChatMetadata();
-                                    metadata.updateLastMessage(message);
-                                    metadataRef.setValue(metadata);
-                                })
-                                .addOnFailureListener(e -> {
-                                    Log.e(TAG, "ERROR CHECK - Failed to send message: " + e.getMessage());
-                                    Toast.makeText(ChatActivity.this, 
-                                        "Failed to send message: " + e.getMessage(), 
-                                        Toast.LENGTH_SHORT).show();
-                                });
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e(TAG, "ERROR CHECK - Failed to get recipient data: " + e.getMessage());
-                        Toast.makeText(ChatActivity.this, 
-                            "Failed to send message: " + e.getMessage(), 
-                            Toast.LENGTH_SHORT).show();
-                    });
-            })
-            .addOnFailureListener(e -> {
-                Log.e(TAG, "ERROR CHECK - Failed to get current user data: " + e.getMessage());
-                Toast.makeText(ChatActivity.this, 
-                    "Failed to send message: " + e.getMessage(), 
-                    Toast.LENGTH_SHORT).show();
-            });
+        // Create a new message
+        Message message = new Message(messageText, mAuth.getCurrentUser().getUid(), recipientId);
+        
+        // Save the message to the database
+        saveMessageToDatabase(message);
     }
 
     private void checkChatAccessAndLoadMessages(String chatId) {
@@ -748,5 +657,102 @@ public class ChatActivity extends AppCompatActivity {
                 Log.e(TAG, "Error updating manicurist rating: " + databaseError.getMessage());
             }
         });
+    }
+
+    private void uploadImageToFirebaseStorage() {
+        if (selectedImageUri == null) {
+            Toast.makeText(this, "No image selected", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Show loading indicator
+        Toast.makeText(this, "Uploading image...", Toast.LENGTH_SHORT).show();
+
+        // Create a unique filename for the image
+        String filename = "chat_images/" + currentChatId + "/" + UUID.randomUUID().toString() + ".jpg";
+        StorageReference imageRef = storageRef.child(filename);
+
+        // Upload the image
+        UploadTask uploadTask = imageRef.putFile(selectedImageUri);
+        uploadTask.addOnSuccessListener(taskSnapshot -> {
+            // Get the download URL
+            imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                String imageUrl = uri.toString();
+                
+                // Create a message with the image URL
+                Message imageMessage = new Message(imageUrl, mAuth.getCurrentUser().getUid(), 
+                    getRecipientId(currentChatId), true);
+                
+                // Save the message to the database
+                saveMessageToDatabase(imageMessage);
+                
+                // Clear the selected image
+                selectedImageUri = null;
+                
+                Toast.makeText(this, "Image sent", Toast.LENGTH_SHORT).show();
+            }).addOnFailureListener(e -> {
+                Log.e(TAG, "Error getting download URL: " + e.getMessage());
+                Toast.makeText(this, "Error sending image", Toast.LENGTH_SHORT).show();
+            });
+        }).addOnFailureListener(e -> {
+            Log.e(TAG, "Error uploading image: " + e.getMessage());
+            Toast.makeText(this, "Error uploading image", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    private void saveMessageToDatabase(Message message) {
+        if (currentChatId == null || mAuth.getCurrentUser() == null) {
+            Log.e(TAG, "Cannot save message: " + 
+                  (currentChatId == null ? "Chat ID is null" : "") +
+                  (mAuth.getCurrentUser() == null ? "User is not authenticated" : ""));
+            return;
+        }
+
+        // Get reference to the messages node for this chat
+        DatabaseReference chatRef = database.getReference("chats").child(currentChatId);
+        DatabaseReference messagesRef = chatRef.child("messages");
+        
+        // Generate a unique key for the message
+        String messageKey = messagesRef.push().getKey();
+        if (messageKey == null) {
+            Log.e(TAG, "Failed to generate message key");
+            return;
+        }
+        
+        // Save the message
+        messagesRef.child(messageKey).setValue(message)
+            .addOnSuccessListener(aVoid -> {
+                Log.d(TAG, "Message saved successfully");
+                messageInput.setText(""); // Clear input field
+            })
+            .addOnFailureListener(e -> {
+                Log.e(TAG, "Error saving message: " + e.getMessage());
+                Toast.makeText(this, "Error sending message", Toast.LENGTH_SHORT).show();
+            });
+    }
+
+    private String getRecipientId(String chatId) {
+        if (chatId == null || mAuth.getCurrentUser() == null) {
+            Log.e(TAG, "Cannot determine recipient ID: " + 
+                  (chatId == null ? "Chat ID is null" : "") +
+                  (mAuth.getCurrentUser() == null ? "User is not authenticated" : ""));
+            return null;
+        }
+
+        String currentUserId = mAuth.getCurrentUser().getUid();
+        if (chatId.contains(currentUserId)) {
+            return chatId.replace(currentUserId, "").replace("_", "");
+        } else if (chatId.contains("_")) {
+            String[] parts = chatId.split("_");
+            if (parts.length == 2) {
+                return parts[0].equals(currentUserId) ? parts[1] : parts[0];
+            } else {
+                Log.e(TAG, "Invalid chat ID format (multiple underscores): " + chatId);
+                return null;
+            }
+        } else {
+            Log.e(TAG, "Chat ID does not contain current user ID or underscore: " + chatId);
+            return null;
+        }
     }
 } 

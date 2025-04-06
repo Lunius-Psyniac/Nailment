@@ -1,6 +1,5 @@
 package com.example.nailment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,17 +9,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
-    private static final String TAG = "MessageAdapter";
     private List<Message> messages = new ArrayList<>();
-    private String currentUserId;
-
-    public MessageAdapter() {
-        currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-    }
+    private String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
     @NonNull
     @Override
@@ -33,51 +31,48 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
         Message message = messages.get(position);
-        boolean isCurrentUser = message.getSenderId().equals(currentUserId);
-
-        // Set message alignment and background based on sender
-        ViewGroup.LayoutParams params = holder.messageContainer.getLayoutParams();
-        if (params instanceof ViewGroup.MarginLayoutParams) {
-            ViewGroup.MarginLayoutParams marginParams = (ViewGroup.MarginLayoutParams) params;
-            if (isCurrentUser) {
-                marginParams.setMargins(64, 0, 8, 0);
-                holder.messageContainer.setBackgroundResource(R.drawable.bg_message_sent);
-            } else {
-                marginParams.setMargins(8, 0, 64, 0);
-                holder.messageContainer.setBackgroundResource(R.drawable.bg_message_received);
-            }
-            holder.messageContainer.setLayoutParams(marginParams);
-        }
-
-        // Format and set the timestamp
-        String timestamp = message.getTimestamp();
-        if (timestamp != null && !timestamp.isEmpty()) {
-            try {
-                long timeInMillis = Long.parseLong(timestamp);
-                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault());
-                String formattedTime = sdf.format(new java.util.Date(timeInMillis));
-                holder.messageTime.setText(formattedTime);
-                holder.messageTime.setVisibility(View.VISIBLE);
-            } catch (NumberFormatException e) {
-                Log.e(TAG, "Error parsing timestamp: " + e.getMessage());
-                holder.messageTime.setVisibility(View.GONE);
-            }
-        } else {
-            holder.messageTime.setVisibility(View.GONE);
-        }
-
-        // Handle image messages
-        if (message.isImageMessage() && message.getImageUrl() != null && !message.getImageUrl().isEmpty()) {
+        
+        // Set sender name
+        holder.userNameText.setText(message.getSenderId().equals(currentUserId) ? "You" : "Other");
+        
+        // Format timestamp
+        long timestamp = Long.parseLong(message.getTimestamp());
+        String timeString = timeFormat.format(new Date(timestamp));
+        holder.messageTime.setText(timeString);
+        
+        // Check if it's an image message
+        if (message.isImageMessage()) {
+            // Hide text view and show image view
             holder.messageText.setVisibility(View.GONE);
             holder.messageImage.setVisibility(View.VISIBLE);
+            
+            // Load image using Glide
             Glide.with(holder.itemView.getContext())
-                    .load(message.getImageUrl())
+                    .load(message.getText()) // Use text field as image URL
                     .into(holder.messageImage);
         } else {
+            // Hide image view and show text view
             holder.messageText.setVisibility(View.VISIBLE);
             holder.messageImage.setVisibility(View.GONE);
+            
+            // Set message text
             holder.messageText.setText(message.getText());
         }
+        
+        // Align message to right if sent by current user, left otherwise
+        View messageContainer = holder.itemView.findViewById(R.id.messageContainer);
+        ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
+        ViewGroup.MarginLayoutParams marginParams = (ViewGroup.MarginLayoutParams) params;
+        
+        if (message.getSenderId().equals(currentUserId)) {
+            marginParams.setMargins(100, 0, 0, 0);
+            holder.userNameText.setVisibility(View.GONE);
+        } else {
+            marginParams.setMargins(0, 0, 100, 0);
+            holder.userNameText.setVisibility(View.VISIBLE);
+        }
+        
+        messageContainer.setLayoutParams(marginParams);
     }
 
     @Override
@@ -90,18 +85,18 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         notifyDataSetChanged();
     }
 
-    public class MessageViewHolder extends RecyclerView.ViewHolder {
+    static class MessageViewHolder extends RecyclerView.ViewHolder {
+        TextView userNameText;
         TextView messageText;
-        ImageView messageImage;
         TextView messageTime;
-        View messageContainer;
+        ImageView messageImage;
 
         MessageViewHolder(View itemView) {
             super(itemView);
+            userNameText = itemView.findViewById(R.id.userNameText);
             messageText = itemView.findViewById(R.id.messageText);
-            messageImage = itemView.findViewById(R.id.messageImage);
             messageTime = itemView.findViewById(R.id.messageTime);
-            messageContainer = itemView.findViewById(R.id.messageContainer);
+            messageImage = itemView.findViewById(R.id.messageImage);
         }
     }
 } 

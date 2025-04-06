@@ -15,6 +15,7 @@ public class Message {
     private String type;
     private String imageUrl;
     private String status;
+    private boolean imageMessage;
 
     // Empty constructor required for Firebase
     public Message() {
@@ -29,16 +30,18 @@ public class Message {
         this.timestamp = String.valueOf(System.currentTimeMillis());
         this.type = TYPE_TEXT;
         this.status = STATUS_SENT;
+        this.imageMessage = false;
     }
 
     // Constructor for image messages
     public Message(String imageUrl, String senderId, String receiverId, boolean isImageMessage) {
-        this.imageUrl = imageUrl;
+        this.text = imageUrl;
         this.senderId = senderId;
         this.receiverId = receiverId;
         this.timestamp = String.valueOf(System.currentTimeMillis());
         this.type = TYPE_IMAGE;
         this.status = STATUS_SENT;
+        this.imageMessage = isImageMessage;
     }
 
     public String getText() {
@@ -98,6 +101,10 @@ public class Message {
     }
 
     public boolean isImageMessage() {
-        return TYPE_IMAGE.equals(type);
+        return imageMessage;
+    }
+
+    public void setImageMessage(boolean imageMessage) {
+        this.imageMessage = imageMessage;
     }
 } 
