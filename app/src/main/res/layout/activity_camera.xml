@@ -4,6 +4,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- Back Button -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@null"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <include
+                layout="@layout/back_button" />
+
+        </LinearLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+
     <Button
         android:id="@+id/cameraButton"
         android:layout_width="0dp"

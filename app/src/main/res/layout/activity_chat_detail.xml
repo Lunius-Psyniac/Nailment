@@ -19,13 +19,8 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <ImageButton
-                android:id="@+id/backButton"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Back"
-                android:src="@drawable/ic_back" />
+            <include
+                layout="@layout/back_button" />
 
             <ImageView
                 android:id="@+id/chatPartnerProfilePicture"
@@ -72,7 +67,7 @@
         android:elevation="4dp"
         android:orientation="horizontal"
         android:padding="8dp"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toTopOf="@id/bottomNavbar">
 
         <ImageButton
             android:id="@+id/attachImageButton"
@@ -103,5 +98,12 @@
             android:text="Send" />
 
     </LinearLayout>
+    
+    <include
+        android:id="@+id/bottomNavbar"
+        layout="@layout/bottom_navbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout> 

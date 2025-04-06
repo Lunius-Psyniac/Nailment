@@ -13,15 +13,9 @@
         android:background="#F5F5F5"
         android:padding="8dp">
 
-        <ImageButton
-            android:id="@+id/backButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start|top"
-            android:layout_margin="16dp"
-            android:background="@null"
-            android:contentDescription="Back"
-            android:src="@drawable/nailment_arrow" />
+        <!-- Include the back button -->
+        <include
+            layout="@layout/back_button" />
 
         <TextView
             android:id="@+id/chatTitle"
@@ -40,7 +34,8 @@
     <LinearLayout
         android:id="@+id/userListContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:orientation="vertical"
         android:visibility="gone">
 
@@ -63,7 +58,8 @@
     <LinearLayout
         android:id="@+id/chatContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:orientation="vertical"
         android:visibility="gone">
 
@@ -102,5 +98,9 @@
                 android:layout_marginStart="8dp"/>
         </LinearLayout>
     </LinearLayout>
+    
+    <!-- Include the bottom navigation bar -->
+    <include
+        layout="@layout/bottom_navbar" />
 
 </LinearLayout> 

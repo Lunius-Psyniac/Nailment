@@ -117,6 +117,37 @@ public class ChatActivity extends AppCompatActivity {
             showUserListView();
             loadUsers();
         }
+        
+        // Bottom Navigation Bar
+        findViewById(R.id.homeButton).setOnClickListener(v -> startActivity(new Intent(this, MainActivity.class)));
+        findViewById(R.id.settingsButton).setOnClickListener(v -> startActivity(new Intent(this, SettingsActivity.class)));
+        
+        // Camera button to open CameraActivity
+        findViewById(R.id.cameraButton).setOnClickListener(v -> {
+            Intent intent = new Intent(ChatActivity.this, CameraActivity.class);
+            startActivity(intent);
+        });
+        
+        // Chat button is already in ChatActivity, so we'll just keep the current activity
+        findViewById(R.id.chatButton).setOnClickListener(v -> {
+            // Already in chat, do nothing or refresh the chat list
+            if (currentChatId == null) {
+                loadUsers();
+            }
+        });
+        
+        // Profile button to navigate to UserProfileActivity
+        findViewById(R.id.profileButton).setOnClickListener(v -> {
+            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                Intent intent = new Intent(ChatActivity.this, UserProfileActivity.class);
+                startActivity(intent);
+            } else {
+                Toast.makeText(ChatActivity.this, "You must be logged in to view your profile", Toast.LENGTH_SHORT).show();
+                // Optionally navigate to login screen
+                Intent intent = new Intent(ChatActivity.this, AuthActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void showChatView() {

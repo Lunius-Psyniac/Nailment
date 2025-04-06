@@ -150,6 +150,32 @@ public class ProfileActivity extends AppCompatActivity {
         // Bottom Navigation Bar
         findViewById(R.id.homeButton).setOnClickListener(v -> startActivity(new Intent(this, MainActivity.class)));
         findViewById(R.id.settingsButton).setOnClickListener(v -> startActivity(new Intent(this, SettingsActivity.class)));
+        
+        // Camera button to open CameraActivity
+        findViewById(R.id.cameraButton).setOnClickListener(v -> {
+            Intent intent = new Intent(ProfileActivity.this, CameraActivity.class);
+            startActivity(intent);
+        });
+        
+        // Chat button to navigate to ChatActivity
+        findViewById(R.id.chatButton).setOnClickListener(v -> {
+            Intent intent = new Intent(ProfileActivity.this, ChatActivity.class);
+            startActivity(intent);
+        });
+        
+        // Profile button to navigate to UserProfileActivity
+        findViewById(R.id.profileButton).setOnClickListener(v -> {
+            FirebaseAuth mAuth = FirebaseAuth.getInstance();
+            if (mAuth.getCurrentUser() != null) {
+                Intent intent = new Intent(ProfileActivity.this, UserProfileActivity.class);
+                startActivity(intent);
+            } else {
+                Toast.makeText(ProfileActivity.this, "You must be logged in to view your profile", Toast.LENGTH_SHORT).show();
+                // Optionally navigate to login screen
+                Intent intent = new Intent(ProfileActivity.this, AuthActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void showDateTimePicker() {

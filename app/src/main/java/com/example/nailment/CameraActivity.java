@@ -38,6 +38,9 @@ public class CameraActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
+        // Back button click listener
+        findViewById(R.id.backButton).setOnClickListener(view -> finish());
+
         findViewById(R.id.cameraButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

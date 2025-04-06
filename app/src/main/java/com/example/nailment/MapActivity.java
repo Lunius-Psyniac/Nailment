@@ -53,6 +53,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private static final String TAG = "MapActivity";
@@ -69,6 +71,35 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         ImageButton backButton = findViewById(R.id.backButton);
         backButton.setOnClickListener(view -> finish());
+
+        // Bottom Navigation Bar
+        findViewById(R.id.homeButton).setOnClickListener(v -> startActivity(new Intent(this, MainActivity.class)));
+        findViewById(R.id.settingsButton).setOnClickListener(v -> startActivity(new Intent(this, SettingsActivity.class)));
+        
+        // Camera button to open CameraActivity
+        findViewById(R.id.cameraButton).setOnClickListener(v -> {
+            Intent intent = new Intent(MapActivity.this, CameraActivity.class);
+            startActivity(intent);
+        });
+        
+        // Chat button to navigate to ChatActivity
+        findViewById(R.id.chatButton).setOnClickListener(v -> {
+            Intent intent = new Intent(MapActivity.this, ChatActivity.class);
+            startActivity(intent);
+        });
+        
+        // Profile button to navigate to UserProfileActivity
+        findViewById(R.id.profileButton).setOnClickListener(v -> {
+            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                Intent intent = new Intent(MapActivity.this, UserProfileActivity.class);
+                startActivity(intent);
+            } else {
+                Toast.makeText(MapActivity.this, "You must be logged in to view your profile", Toast.LENGTH_SHORT).show();
+                // Optionally navigate to login screen
+                Intent intent = new Intent(MapActivity.this, AuthActivity.class);
+                startActivity(intent);
+            }
+        });
 
         try {
             // Initialize Places API
